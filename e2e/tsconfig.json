@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pages/*": ["automation/pages/*"],
+      "@utils/*": ["automation/utils/*"],
+      "@fixtures/*": ["automation/fixtures/*"]
+    }
+  },
+  "include": ["automation/**/*.ts", "playwright.config.ts"]
+}

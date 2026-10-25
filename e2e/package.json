@@ -1,0 +1,24 @@
+{
+  "name": "hw04-eshop-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HW04 - AI-assisted Playwright automation on the EShop SUT (FR-01, FR-11, FR-13)",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:fr01": "cross-env FEATURE=fr01 playwright test automation/tests/fr01_account_registration",
+    "test:fr11": "cross-env FEATURE=fr11 playwright test automation/tests/fr11_order_history",
+    "test:fr13": "cross-env FEATURE=fr13 playwright test automation/tests/fr13_dashboard",
+    "report": "playwright show-report",
+    "runs:all": "powershell -ExecutionPolicy Bypass -File ./automation/run-all-browsers.ps1",
+    "codegen": "playwright codegen"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.10.0",
+    "cross-env": "^7.0.3",
+    "csv-parse": "^5.6.0",
+    "dotenv": "^17.4.2",
+    "typescript": "^5.7.0"
+  }
+}
