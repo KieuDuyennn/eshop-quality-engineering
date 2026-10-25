@@ -12,7 +12,7 @@ import { STUDENT_ID, STUDENT_NAME, RUN_STAMP, FEATURE, BROWSER_TAG } from './aut
  * (3 features x 3 browsers) each land in their own folder:
  *
  *   FEATURE=fr01 BROWSER=chromium npx playwright test automation/tests/fr01_account_registration --project=chromium
- *     -> reports/final/html/fr01/chromium/index.html
+ *     -> playwright-report/fr01/chromium/index.html
  *
  * automation/run-all-browsers.ps1 loops all 9 combinations for you.
  *
@@ -23,7 +23,7 @@ import { STUDENT_ID, STUDENT_NAME, RUN_STAMP, FEATURE, BROWSER_TAG } from './aut
  *   3. a per-test annotation added in automation/fixtures/test-fixtures.ts.
  */
 
-const reportFolder = `reports/final/html/${FEATURE}/${BROWSER_TAG}`;
+const reportFolder = `playwright-report/${FEATURE}/${BROWSER_TAG}`;
 
 export default defineConfig({
   testDir: './automation/tests',
@@ -56,9 +56,9 @@ export default defineConfig({
     ['html', {
       open: 'never',
       outputFolder: reportFolder,
-      title: `HW04 EShop Automation - ${FEATURE.toUpperCase()} - ${BROWSER_TAG} - Run by: ${STUDENT_ID} - ${RUN_STAMP}`,
+      title: `EShop E2E - ${FEATURE.toUpperCase()} - ${BROWSER_TAG} - ${RUN_STAMP}`,
     }],
-    ['json', { outputFile: `reports/final/json/${FEATURE}-${BROWSER_TAG}.json` }],
+    ['json', { outputFile: `playwright-report/json/${FEATURE}-${BROWSER_TAG}.json` }],
   ],
 
   use: {
