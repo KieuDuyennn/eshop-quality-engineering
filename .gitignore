@@ -25,3 +25,6 @@ Thumbs.db
 # IDEs and editors
 .idea/
 .vscode/
+
+# SUT database - recreated and re-seeded on every backend start (database.js)
+sut/backend/*.sqlite
