@@ -28,3 +28,6 @@ Thumbs.db
 
 # SUT database - recreated and re-seeded on every backend start (database.js)
 sut/backend/*.sqlite
+
+# k6 run output (written by performance/scripts/*.sh)
+performance/reports/
