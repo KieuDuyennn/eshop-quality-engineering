@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { RUN_BY_LABEL, RUN_STAMP, STUDENT_NAME } from '../utils/student';
+import { RUN_STAMP } from '../utils/student';
 import { RegisterPage } from '../pages/RegisterPage';
 import { LoginPage } from '../pages/LoginPage';
 import { OrderHistoryPage } from '../pages/OrderHistoryPage';
@@ -11,8 +11,7 @@ import * as api from '../utils/eshop-api';
  * Shared fixtures for the whole suite.
  *
  * Import `test` from here, never from '@playwright/test' directly - that is what
- * guarantees the "Run by" annotation lands on every single test in the HTML
- * report, which is the section 11 evidence requirement.
+ * guarantees the run annotation lands on every single test in the HTML report.
  */
 
 type Pages = {
@@ -29,10 +28,8 @@ type WorkerAuth = {
 };
 
 export const test = base.extend<Pages, WorkerAuth>({
-  // Runs before every test: stamp authorship onto the test's report entry.
+  // Runs before every test: stamp the run start onto the test's report entry.
   page: async ({ page }, use, testInfo) => {
-    testInfo.annotations.push({ type: 'Run by', description: RUN_BY_LABEL });
-    testInfo.annotations.push({ type: 'Student', description: STUDENT_NAME });
     testInfo.annotations.push({ type: 'Run started', description: RUN_STAMP });
     await use(page);
   },

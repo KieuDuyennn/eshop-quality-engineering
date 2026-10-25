@@ -3,7 +3,7 @@
 // run after every module below had already read process.env.
 import { BASE_URL, envReadiness } from './automation/utils/env';
 import { defineConfig, devices } from '@playwright/test';
-import { STUDENT_ID, STUDENT_NAME, RUN_STAMP, FEATURE, BROWSER_TAG } from './automation/utils/student';
+import { RUN_STAMP, FEATURE, BROWSER_TAG } from './automation/utils/student';
 
 /**
  * HW04 - Automation Testing on the EShop SUT.
@@ -15,12 +15,6 @@ import { STUDENT_ID, STUDENT_NAME, RUN_STAMP, FEATURE, BROWSER_TAG } from './aut
  *     -> playwright-report/fr01/chromium/index.html
  *
  * automation/run-all-browsers.ps1 loops all 9 combinations for you.
- *
- * The "Run by: {StudentID}" evidence required by the brief (section 6, Task 1
- * and section 11) is stamped in three places so it survives any reporter change:
- *   1. the HTML report title,
- *   2. config `metadata`, rendered in the report header,
- *   3. a per-test annotation added in automation/fixtures/test-fixtures.ts.
  */
 
 const reportFolder = `playwright-report/${FEATURE}/${BROWSER_TAG}`;
@@ -39,12 +33,9 @@ export default defineConfig({
   expect: { timeout: 10_000 },
 
   metadata: {
-    'Run by': STUDENT_ID,
-    'Student name': STUDENT_NAME,
     'Feature under test': FEATURE,
     'Browser': BROWSER_TAG,
     'Run started (ISO)': RUN_STAMP,
-    'Assignment': 'HW04-AI - Automation Testing',
     'SUT': 'EShop (https://github.com/ttbhanh/eshop-sut)',
     // Booleans only. Proves .env was actually loaded for this run - the gap that
     // blocked FR-11 - without putting a credential into attributable evidence.
