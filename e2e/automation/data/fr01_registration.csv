@@ -1,0 +1,44 @@
+tc_id,title,type,level,name,email,password,bypass,omit_field,expect_outcome,expect_channel,expect_signal,note
+FR01-TC-01a,all three fields valid so the account is created,positive,ui,Nguyen Van A,{{UNIQUE}},Password123!,,,success,redirect,/login,REQ-15 EC-28 baseline D-4 - password is specification-valid: 8+ chars with upper lower digit and a special character from the documented set
+FR01-TC-01b,register endpoint returns a created account,positive,api,Nguyen Van A,{{UNIQUE}},Password123!,,,success,api,200,REQ-16 EC-27 status confirmed on the first run against api_specification.md 1.1 (200 OK)
+FR01-TC-01c,diagnostic flow - redirect and persistence reached with a password this build accepts,diagnostic,ui,Nguyen Van A,{{UNIQUE}},Password 123,password-gate,,success,redirect,/login,expectation calibrated to observed behaviour NOT to the specification; exists only to keep the end-to-end redirect and persistence path under test while TC-01a is blocked at the client gate; must be retired when the password rule is corrected
+FR01-TC-02,full name left empty,negative,ui,,{{UNIQUE}},Password123!,,,rejected,native,,EC-29 blocked by the required attribute before any password check
+FR01-TC-03,name key missing from the request body,negative,api,,{{UNIQUE}},Password123!,,name,rejected,api,400,EC-29 unreachable through the form
+FR01-TC-04,email left empty,negative,ui,Nguyen Van A,,Password123!,,,rejected,native,,EC-29 blocked by the required attribute before any password check
+FR01-TC-05,email key missing from the request body,negative,api,Nguyen Van A,,Password123!,,email,rejected,api,400,EC-29 unreachable through the form
+FR01-TC-06,email has no at sign,negative,ui,Nguyen Van A,userdomain.com,Password 123,password-gate,,rejected,banner,email,EC-30
+FR01-TC-07,email has no domain part,negative,ui,Nguyen Van A,user@,Password 123,password-gate,,rejected,banner,email,EC-30
+FR01-TC-08,email has no local part,negative,ui,Nguyen Van A,@domain.com,Password 123,password-gate,,rejected,banner,email,EC-30
+FR01-TC-09,email already belongs to an account,negative,ui,Nguyen Van A,{{EXISTING}},Password 123,password-gate,,rejected,banner,email,EC-31 needs the seeded account
+FR01-TC-10,password left empty,negative,ui,Nguyen Van A,{{UNIQUE}},,,,rejected,native,,EC-29 reduced from the HW02 combined probe
+FR01-TC-11,password key missing from the request body,negative,api,Nguyen Van A,{{UNIQUE}},,,password,rejected,api,400,EC-29 unreachable through the form
+FR01-TC-12,password of six characters,negative,ui,Nguyen Van A,{{UNIQUE}},Pass1!,,,rejected,banner,password,EC-32 length below the minimum
+FR01-TC-13,password with no uppercase letter,negative,ui,Nguyen Van A,{{UNIQUE}},password123!,,,rejected,banner,password,EC-32
+FR01-TC-14,password with no lowercase letter,negative,ui,Nguyen Van A,{{UNIQUE}},PASSWORD123!,,,rejected,banner,password,EC-32
+FR01-TC-15,password with no digit,negative,ui,Nguyen Van A,{{UNIQUE}},Password!,,,rejected,banner,password,EC-32
+FR01-TC-16,password with no special character,negative,ui,Nguyen Van A,{{UNIQUE}},Password123,,,rejected,banner,password,EC-32
+FR01-TC-18,full name is whitespace only,edge,ui,"   ",{{UNIQUE}},Password 123,password-gate,,rejected,banner,name,OQ-04 OQ-10 unresolved - expectation follows the spec
+FR01-TC-19,email has no top level domain,edge,ui,Nguyen Van A,user@domain,Password 123,password-gate,,rejected,banner,email,OQ-11 unresolved - expectation follows the spec
+FR01-TC-20,email uses plus addressing,edge,ui,Nguyen Van A,user+tag{{RUN}}@mail.domain.com,Password 123,password-gate,,success,redirect,/login,OQ-11 unresolved - expectation follows the spec
+FR01-TC-21,email differs from an existing one only by case,edge,ui,Nguyen Van A,{{EXISTING_UPPER}},Password 123,password-gate,,rejected,banner,email,OQ-09 uniqueness case sensitivity
+FR01-TC-22,password uses a special character outside the documented set,edge,ui,Nguyen Van A,{{UNIQUE}},Password123#,,,rejected,banner,password,OQ-06 exclusive or inclusive set
+FR01-BVA-01,password of exactly seven characters,edge,ui,Nguyen Van A,{{UNIQUE}},Pa1!abc,,,rejected,banner,password,one below the minimum length
+FR01-BVA-02,password of exactly eight characters,edge,ui,Nguyen Van A,{{UNIQUE}},Pa1!abcd,,,success,redirect,/login,minimum length must be accepted
+FR01-BVA-03,password of exactly nine characters,edge,ui,Nguyen Van A,{{UNIQUE}},Pa1!abcde,,,success,redirect,/login,one above the minimum length
+FR01-BVA-06,password of a single character,edge,ui,Nguyen Van A,{{UNIQUE}},P,,,rejected,banner,password,must read as weak not as missing
+FR01-BVA-07,password of two characters,edge,ui,Nguyen Van A,{{UNIQUE}},Pa,,,rejected,banner,password,must read as weak not as missing
+FR01-BVA-04,full name of a single character,edge,ui,A,{{UNIQUE}},Password 123,password-gate,,success,redirect,/login,catches empty mis-specified as length below two
+FR01-BVA-05,full name of two characters,edge,ui,An,{{UNIQUE}},Password 123,password-gate,,success,redirect,/login,
+FR01-TC-24,password holding a space and no special character,negative,ui,Nguyen Van A,{{UNIQUE}},Password 123,,,rejected,banner,password,diagnostic - isolates the client side password rule
+FR01-API-01,register API accepts an empty name,negative,api,,{{UNIQUE}},Password123!,,,rejected,api,400,server must enforce the required name even when native UI validation is bypassed
+FR01-API-02,register API accepts an empty email,negative,api,Nguyen Van A,,Password123!,,,rejected,api,400,server must enforce the required email even when native UI validation is bypassed
+FR01-API-03,register API accepts an empty password,negative,api,Nguyen Van A,{{UNIQUE}},,,,rejected,api,400,server must enforce the required password even when native UI validation is bypassed
+FR01-API-04,register API accepts email without at sign,negative,api,Nguyen Van A,fr01.api04.{{RUN}}example.com,Password123!,,,rejected,api,400,server must validate email format independently of the UI
+FR01-API-05,register API accepts email without domain,negative,api,Nguyen Van A,fr01.api05.{{RUN}}@,Password123!,,,rejected,api,400,server must validate email format independently of the UI
+FR01-API-06,register API accepts email without local part,negative,api,Nguyen Van A,@fr01-api06-{{RUN}}.com,Password123!,,,rejected,api,400,server must validate email format independently of the UI
+FR01-API-07,register API accepts a seven character password,negative,api,Nguyen Van A,{{UNIQUE}},Pa1!abc,,,rejected,api,400,server must enforce the documented minimum length
+FR01-API-08,register API accepts password without uppercase,negative,api,Nguyen Van A,{{UNIQUE}},password1!,,,rejected,api,400,server must enforce every documented password category
+FR01-API-09,register API accepts password without lowercase,negative,api,Nguyen Van A,{{UNIQUE}},PASSWORD1!,,,rejected,api,400,server must enforce every documented password category
+FR01-API-10,register API accepts password without digit,negative,api,Nguyen Van A,{{UNIQUE}},Password!,,,rejected,api,400,server must enforce every documented password category
+FR01-API-11,register API accepts password without special character,negative,api,Nguyen Van A,{{UNIQUE}},Password123,,,rejected,api,400,server must enforce every documented password category
+FR01-API-12,register API accepts an exact duplicate email,negative,api,Nguyen Van A,{{EXISTING}},Password123!,,,rejected,api,400,server must enforce uniqueness even when the UI is bypassed
