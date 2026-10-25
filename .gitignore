@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Local environment (keep the documented templates)
+.env
+.env.*
+!.env.example
+
+# Playwright artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Authentication storage state - contains live session data, never commit
+e2e/automation/fixtures/.auth/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.idea/
+.vscode/
