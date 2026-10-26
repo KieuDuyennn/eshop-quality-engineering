@@ -36,7 +36,7 @@ import { BasePage } from './BasePage';
  *      wording; `emailInput` is named for what the field actually is.
  *   3. Both inputs are type="text" - including the password field - so the
  *      password is rendered in clear text and `input[type=password]` matches
- *      nothing. Reported as an observation; the verdict is the student's.
+ *      nothing. Reported as an observation; the verdict is the tester's.
  *
  * The session lives in localStorage under the key "token" (AuthContext.jsx), so
  * the token helpers below manipulate that key rather than cookies.

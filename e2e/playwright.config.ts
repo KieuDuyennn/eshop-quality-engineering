@@ -8,7 +8,7 @@ import { RUN_STAMP, FEATURE, BROWSER_TAG } from './automation/utils/student';
 /**
  * Playwright configuration for the EShop end-to-end suite.
  *
- * Report layout is driven by two env vars so that the 9 required runs
+ * Report layout is driven by two env vars so that the 9 runs
  * (3 features x 3 browsers) each land in their own folder:
  *
  *   FEATURE=fr01 BROWSER=chromium npx playwright test automation/tests/fr01_account_registration --project=chromium

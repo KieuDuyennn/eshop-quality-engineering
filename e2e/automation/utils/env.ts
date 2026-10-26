@@ -5,13 +5,14 @@ import path from 'node:path';
 /**
  * Central `.env` loader. **Import this before anything that reads `process.env`.**
  *
- * Why it exists: the README told the student to copy `.env.example` to `.env`, but
- * nothing in the project ever loaded that file. `playwright.config.ts`, the specs and
- * `run-all-browsers.ps1` all read `process.env` directly, so in a normal shell
+ * Why it exists: the README said to copy `.env.example` to `.env`, but
+ * nothing in the project ever loaded that file. `playwright.config.ts` and the specs
+ * all read `process.env` directly, so in a normal shell
  * USER_EMAIL, USER_PASSWORD, ADMIN_EMAIL and ADMIN_PASSWORD were simply absent and
  * every FR-11 case would have been blocked at its guard. `--list` still reported 40
  * tests because collection does not run hooks, so the gap was invisible until a real
- * run. See finding 26 in docs/test-plan/AI_Review_Gap_Analysis.md.
+ * run. See finding 26 in
+ * https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/AI_Review_Gap_Analysis.md
  *
  * Why a module rather than a `loadDotenv()` call inside `playwright.config.ts`: ES
  * module imports are evaluated before any statement in the importing module, so a
@@ -53,7 +54,7 @@ export const ADMIN_PASSWORD = required('ADMIN_PASSWORD');
  * correctly signed but already expired - a code path in `jwt.verify` that a malformed
  * token does not reach.
  *
- * This is not a credential of the student's and not a secret of any real system: it is
+ * This is not a personal credential and not a secret of any real system: it is
  * a constant published in the SUT's source (`backend/server.js:10`). It still lives in
  * `.env` rather than in a tracked file, because "the value is public" is a judgement
  * that can change, and the project rule is that key material does not enter Git. The

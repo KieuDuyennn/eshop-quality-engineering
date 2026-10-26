@@ -1,9 +1,9 @@
 import { expect, type Page, type Locator, type APIResponse } from '@playwright/test';
 
 /**
- * The brief (section 6, Task 1) requires "at least three distinct assertion
- * patterns". The three below are genuinely different kinds of check, not three
- * spellings of the same one - keep them distinct when you extend this file:
+ * The suite uses three distinct assertion patterns. They are genuinely different
+ * kinds of check, not three spellings of the same one - keep them distinct when
+ * you extend this file:
  *
  *   Pattern 1 - UI state / web-first assertion  (what the user can see)
  *   Pattern 2 - API / contract assertion        (what the server actually returned)

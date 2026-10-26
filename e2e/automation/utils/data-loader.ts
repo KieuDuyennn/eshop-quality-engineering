@@ -4,13 +4,12 @@ import path from 'node:path';
 import { parse } from 'csv-parse/sync';
 
 /**
- * Data-driven support (brief section 6, Task 1: "The test data must be stored in a
- * separate .csv or .json file - hardcoded inline arrays or objects in the script
- * are not accepted"). Files live in `automation/data/`.
+ * Data-driven support: test data is stored in separate .csv or .json files, never
+ * as inline arrays or objects in a spec. Files live in `automation/data/`.
  *
  * Every spec must get its cases through one of these two loaders. If you find
- * yourself writing a literal array of cases inside a `.spec.ts`, that is the
- * thing the brief rejects.
+ * yourself writing a literal array of cases inside a `.spec.ts`, move it to a data
+ * file instead.
  */
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -18,7 +17,7 @@ const DATA_DIR = path.join(ROOT, 'data');
 
 /** Shape every data row is expected to share, so specs can title themselves. */
 export interface TestCaseRow {
-  /** Stable ID traced back to the HW02 test-design artifact, e.g. `FR01-TC-03`. */
+  /** Stable ID traced back to the test-design/ artifact, e.g. `FR01-TC-03`. */
   tc_id: string;
   /** One-line intent, used as the Playwright test title. */
   title: string;

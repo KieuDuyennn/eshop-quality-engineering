@@ -2,12 +2,13 @@ import type { Locator, Page, Response } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 /**
- * FR-11 Order history view, user side (Pool B).
+ * FR-11 Order history view, user side.
  *
  * The path is `/profile`, NOT `/orders`. `frontend-web/src/App.jsx` declares no
  * `/orders` route at all; the order history is a panel inside `Profile.jsx`.
- * HW02 recorded FR-11 as having no web UI because it searched for a route name
- * instead of the rendered feature - see TC_Matrix_FR11.md.
+ * The original test design recorded FR-11 as having no web UI because it searched
+ * for a route name instead of the rendered feature - see
+ * https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/TC_Matrix_FR11.md
  *
  * Locators derived from `Profile.jsx` and then verified on the running page with
  * a throwaway probe, against a seeded account holding 16 orders across all five
