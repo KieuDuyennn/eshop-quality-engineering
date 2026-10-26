@@ -22,7 +22,7 @@ import type { OrderStatus } from '../../utils/eshop-api';
  * router, so the dashboard is the landing view and NOT `/admin/dashboard`.
  *
  * Approach: **measure, seed through the API, re-measure.** The dashboard reports
- * GLOBAL totals and the SUT database is never reset between the nine required runs,
+ * GLOBAL totals and the SUT database is never reset between the nine runs,
  * so an absolute expectation ("revenue = 100", as first designed) is unrunnable.
  * Every revenue and count case asserts the CHANGE its own seeded orders cause.
  *

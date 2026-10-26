@@ -17,9 +17,9 @@ import { expectApiResponse } from '../../utils/assertions';
  *            added after the first live review (16 rows total)
  *
  * Expected values are the ones the specification asks for, not the ones the current
- * build produces - see docs/test-plan/TC_Matrix_FR01.md. Several rows are therefore
- * expected to come back red on the first run. A red case here is a finding to triage,
- * not an assertion to soften.
+ * build produces - see https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/TC_Matrix_FR01.md
+ * Several rows are therefore expected to come back red on the first run. A red case
+ * here is a finding to triage, not an assertion to soften.
  *
  * Assertion patterns used (three distinct kinds):
  *   1 UI state       - banner text, URL, native validity

@@ -2,14 +2,14 @@ import type { Locator, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 /**
- * FR-01 Account registration (Pool A).
+ * FR-01 Account registration.
  *
  * Locators below were derived by reading `frontend-web/src/pages/Register.jsx`,
  * not by guessing. Three facts about that page drive every choice here:
  *
  *   1. The form has exactly three fields - Ho Ten, Email, Mat khau - and no
  *      Confirm Password field. TC-17 and TC-23 are unautomatable for that reason
- *      (see docs/test-plan/TC_Matrix_FR01.md).
+ *      (see https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/TC_Matrix_FR01.md).
  *   2. Each <label> carries no htmlFor and each <input> carries no id or
  *      aria-label, so getByLabel matches nothing and the two text inputs share
  *      no accessible name. This is why the field getters fall to CSS.

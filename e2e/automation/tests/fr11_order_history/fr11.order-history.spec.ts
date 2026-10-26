@@ -13,7 +13,8 @@ import { readFr11AuthState } from '../../utils/fr11-auth-cache';
  *
  * All 46 cases come from `automation/data/fr11_order_history.json`; there is no case
  * literal in this file. The feature is rendered at `/profile`, not at `/orders` - see
- * the correction at the top of docs/test-plan/TC_Matrix_FR11.md.
+ * the correction at the top of
+ * https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/TC_Matrix_FR11.md
  *
  * Approach: **API setup, then assert.** Every order this suite reasons about is created
  * by the fixture through the API, because the statuses FR-11 displays are not reachable
@@ -36,7 +37,7 @@ import { readFr11AuthState } from '../../utils/fr11-auth-cache';
  *                      date must parse; the money cell must mean an amount. This is what
  *                      separates "a table rendered" from "the table tells the truth".
  *
- * Cross-run safety: the SUT database is never reset between the 9 required runs, so the
+ * Cross-run safety: the SUT database is never reset between the 9 runs, so the
  * owner account accumulates orders monotonically. Nothing here asserts an absolute row
  * count, every assertion is scoped to the ids this run seeded, and the two extra
  * identities are registered fresh per run.

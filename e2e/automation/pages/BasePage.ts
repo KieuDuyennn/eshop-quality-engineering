@@ -3,16 +3,15 @@ import type { Page, Locator } from '@playwright/test';
 /**
  * Base for all page objects.
  *
- * Selector policy for this project - the AI review in Task 1 is largely about
- * this, so it is written down rather than left implicit:
+ * Selector policy for this project - written down rather than left implicit:
  *   1st choice  getByRole / getByLabel  (accessible, survives restyling)
  *   2nd choice  getByTestId             (stable if the SUT ships test ids)
  *   3rd choice  getByText               (breaks on i18n - EShop is Vietnamese)
  *   last resort CSS/XPath by class      (this is the "fragile selector" smell)
  *
  * Any locator that falls to the last resort must carry a one-line comment saying
- * why nothing better was available. Those comments become evidence in
- * `docs/test-plan/AI_Review_Gap_Analysis.md`.
+ * why nothing better was available. The original review of these choices is in
+ * https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/AI_Review_Gap_Analysis.md
  */
 export abstract class BasePage {
   constructor(protected readonly page: Page) {}

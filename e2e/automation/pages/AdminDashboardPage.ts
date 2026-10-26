@@ -2,7 +2,7 @@ import type { Dialog, Locator, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 /**
- * FR-13 Dashboard, admin side (Pool C).
+ * FR-13 Dashboard, admin side.
  *
  * This page object was rewritten from the scaffold after reading
  * `frontend-admin/src/App.jsx` and probing the running app on all three engines.
