@@ -12,7 +12,7 @@ import * as api from '../../utils/eshop-api';
 import type { OrderStatus } from '../../utils/eshop-api';
 
 /**
- * FR-13 Dashboard, admin (Pool C) - HW04 Task 1.
+ * FR-13 Dashboard, admin.
  *
  * All 50 cases come from `automation/data/fr13_dashboard.json`; there is no case
  * literal in this file, and no branch keys off a `tc_id`. Everything that varies
@@ -23,15 +23,15 @@ import type { OrderStatus } from '../../utils/eshop-api';
  *
  * Approach: **measure, seed through the API, re-measure.** The dashboard reports
  * GLOBAL totals and the SUT database is never reset between the nine required runs,
- * so an absolute expectation ("revenue = 100", as HW02 wrote them) is unrunnable.
+ * so an absolute expectation ("revenue = 100", as first designed) is unrunnable.
  * Every revenue and count case asserts the CHANGE its own seeded orders cause.
  *
  * Expected values state what the SPECIFICATION requires (README.md FR-13 L183:
  * revenue is the sum of `total_amount` over `status = 'delivered'`, no multiplier),
  * never what this build produces. A red case is a finding to triage, not an
- * assertion to soften - project rule §4.
+ * assertion to soften.
  *
- * Assertion patterns used (the brief wants >= 3 genuinely distinct ones):
+ * Assertion patterns used (three genuinely distinct kinds):
  *   1 UI state       - cards visible, dashboard reachable or not, the app's own alert
  *                      text, the login form present, the token gone after logout
  *   2 API / contract - status codes of the admin endpoints and of the self-update

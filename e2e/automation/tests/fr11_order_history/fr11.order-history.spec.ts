@@ -9,7 +9,7 @@ import type { OrderStatus } from '../../utils/eshop-api';
 import { readFr11AuthState } from '../../utils/fr11-auth-cache';
 
 /**
- * FR-11 Order history view, user (Pool B) - HW04 Task 1.
+ * FR-11 Order history view, user.
  *
  * All 46 cases come from `automation/data/fr11_order_history.json`; there is no case
  * literal in this file. The feature is rendered at `/profile`, not at `/orders` - see
@@ -25,9 +25,9 @@ import { readFr11AuthState } from '../../utils/fr11-auth-cache';
  * Expected values are the ones the requirement asks for, not the ones this build
  * produces. 15 rows are predicted to come back red, clustering into 9 root causes
  * (table at the end of the matrix). A red case here is a finding to triage, not an
- * assertion to soften - project rule §4.
+ * assertion to soften.
  *
- * Assertion patterns used (the brief wants >= 3 genuinely distinct ones):
+ * Assertion patterns used (three genuinely distinct kinds):
  *   1 UI state       - badge label and colour class, empty state, button presence,
  *                      the row's status after an action
  *   2 API / contract - status code of the detail, cancel, admin and checkout endpoints
