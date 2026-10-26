@@ -6,15 +6,13 @@ import { defineConfig, devices } from '@playwright/test';
 import { RUN_STAMP, FEATURE, BROWSER_TAG } from './automation/utils/student';
 
 /**
- * HW04 - Automation Testing on the EShop SUT.
+ * Playwright configuration for the EShop end-to-end suite.
  *
  * Report layout is driven by two env vars so that the 9 required runs
  * (3 features x 3 browsers) each land in their own folder:
  *
  *   FEATURE=fr01 BROWSER=chromium npx playwright test automation/tests/fr01_account_registration --project=chromium
  *     -> playwright-report/fr01/chromium/index.html
- *
- * automation/run-all-browsers.ps1 loops all 9 combinations for you.
  */
 
 const reportFolder = `playwright-report/${FEATURE}/${BROWSER_TAG}`;
