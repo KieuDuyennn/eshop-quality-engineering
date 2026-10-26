@@ -3,7 +3,7 @@ import { loadCsv, caseTitle, type TestCaseRow } from '../../utils/data-loader';
 import { expectApiResponse } from '../../utils/assertions';
 
 /**
- * FR-01 Account registration (Pool A) - HW04 Task 1.
+ * FR-01 Account registration.
  *
  * All 43 cases come from `automation/data/fr01_registration.csv`; there is no case
  * literal in this file. Each row says which channel it expects the rejection or the
@@ -21,7 +21,7 @@ import { expectApiResponse } from '../../utils/assertions';
  * expected to come back red on the first run. A red case here is a finding to triage,
  * not an assertion to soften.
  *
- * Assertion patterns used (brief section 6 wants >= 3 distinct ones):
+ * Assertion patterns used (three distinct kinds):
  *   1 UI state       - banner text, URL, native validity
  *   2 API / contract - status code and body of POST /api/register
  *   3 data integrity - after the UI claims success, the account must actually be
