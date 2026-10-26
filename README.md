@@ -11,6 +11,19 @@ Test design, end-to-end and performance test suites for the EShop web applicatio
 | `test-design/` | Black-box test design for four features (FR-01, FR-06, FR-11, FR-13): requirements breakdown, equivalence partitioning, domain test cases, boundary value analysis and gap notes. The FR-01, FR-11 and FR-13 designs are the basis of the `e2e/` suite. |
 | `sut/` | The EShop app under test: `backend/` (Express + SQLite), `frontend-web/` (customer site) and `frontend-admin/` (admin dashboard). |
 
+> **Note:** the SUT intentionally contains insecure code (for example, a hardcoded JWT secret in `sut/backend/server.js`). It is a test target, not production code.
+
+## Results
+
+- **139 data-driven cases**: FR-01 has 43, FR-11 has 46 and FR-13 has 50.
+- **417 executions** across 3 browsers (Chromium, Firefox, WebKit).
+- **45 confirmed defects** in FR-01, grouped into 5 root causes.
+- Example defects:
+  - The registration API accepts requests with missing required fields and still creates accounts.
+  - Checkout stores `total_amount` as sent by the client, without recalculating it on the server.
+
+Original reports: [main report](https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/01_Main_Report.md), [bug report](https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/02_Bug_Report.md) and [HTML/JSON run reports](https://github.com/KieuDuyennn/software__testing/tree/main/HW04/reports/final) in `software__testing/HW04`.
+
 ## Provenance
 
 - **test-design**: my individual coursework, at https://github.com/KieuDuyennn/software__testing/tree/main/HW02
