@@ -2,7 +2,7 @@
   "name": "eshop-e2e",
   "version": "1.0.0",
   "private": true,
-  "description": "Playwright end-to-end tests for the EShop SUT (FR-01, FR-11, FR-13)",
+  "description": "Playwright E2E suite for the EShop SUT (FR-01, FR-11, FR-13)",
   "type": "module",
   "scripts": {
     "test": "playwright test",

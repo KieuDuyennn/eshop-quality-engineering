@@ -221,7 +221,7 @@
       "api_call": "order_detail",
       "detail_owned_by": "other",
       "expect_http_any_of": [401, 403, 404],
-      "note": "HW02 TC-03, FAILED there: HTTP 200, no ownership check (BUG-07). server.js:360 confirms GET /api/orders/:id carries no authenticateToken at all. Expected to fail here too - per project rule §4 that is a finding, not an assertion to soften. The denial code is left as a set because OQ-06 (denial shape) is moot while no check exists. TC-28 is the control that proves the codebase CAN check ownership, which sharpens this into 'the detail route forgot' rather than 'the app has no concept of ownership'."
+      "note": "HW02 TC-03, FAILED there: HTTP 200, no ownership check (BUG-07). server.js:360 confirms GET /api/orders/:id carries no authenticateToken at all. Expected to fail here too - a failing assertion here is a finding, not something to soften. The denial code is left as a set because OQ-06 (denial shape) is moot while no check exists. TC-28 is the control that proves the codebase CAN check ownership, which sharpens this into 'the detail route forgot' rather than 'the app has no concept of ownership'."
     },
     {
       "tc_id": "FR11-TC-15",

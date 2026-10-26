@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "feature": "FR-13 Dashboard (Pool C)",
+    "feature": "FR-13 Dashboard",
     "traceability": "docs/test-plan/TC_Matrix_FR13.md; hw02_ref names the HW02 case or open question each row derives from",
     "case_count": 50,
     "validated_at_runtime": "automation/tests/fr13_dashboard/fr13.dashboard.spec.ts validateCases() checks this count, duplicate tc_ids, the type/layer/actor/check/final_status enums, finite seed amounts, positive integer `repeat`, non-empty integer expect_http_any_of, non-negative delta_precision and cart item shape - and throws with the full list before any test runs.",
