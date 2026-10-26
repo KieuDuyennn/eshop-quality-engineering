@@ -17,7 +17,7 @@ Test design, end-to-end and performance test suites for the EShop web applicatio
 
 - **139 data-driven cases**: FR-01 has 43, FR-11 has 46 and FR-13 has 50.
 - **417 executions** across 3 browsers (Chromium, Firefox, WebKit).
-- **45 confirmed defects** in FR-01, grouped into 5 root causes.
+- **45 confirmed defects** across the three features (FR-01: 23, FR-11: 16, FR-13: 6); the 23 FR-01 defects trace back to 5 shared root causes.
 - Example defects:
   - The registration API accepts requests with missing required fields and still creates accounts.
   - Checkout stores `total_amount` as sent by the client, without recalculating it on the server.
