@@ -1,7 +1,6 @@
 # FR-06: Product Detail View - Mobile App
 
 > Pool: FR-06 is normally Pool A (Products). Here it is tested via the Expo mobile app.
-> Confirm with your group/TA how this counts (extra feature vs a pool slot).
 > Source of truth for the SPEC (sections 1-5, 7): EShop System Requirements
 > Specification (README.md, Section 3, FR-06), cross-checked against
 > api_specification.md.

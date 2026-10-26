@@ -1,6 +1,6 @@
 # FR-13: Admin Dashboard
 
-> Pool C - Web Admin (per HW02 group assignment).
+> Pool C - Web Admin.
 > Source of truth: EShop System Requirements Specification (README.md, Section 6, FR-13),
 > cross-checked against api_specification.md. Access is governed by FR-12 (admin-only).
 

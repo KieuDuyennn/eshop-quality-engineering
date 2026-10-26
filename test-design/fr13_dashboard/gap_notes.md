@@ -139,7 +139,7 @@ Re-reading `output/02_Equivalence_Partitioning.md` before approval. Findings
 only - nothing fixed yet. Each finding tagged `[P2-Gxx]` with evidence and
 an honest severity call (real gap vs. nitpick). No backend source code
 exists anywhere in this repository (checked via grep across the repo and
-`repomix-output.xml`, which only contains this same coursework project's own
+`repomix-output.xml`, which only contains this same project's own
 files) - any risk theory cited below is a plausible implementation-pattern
 argument, not something verified against actual code, exactly the same
 epistemic footing as OQ-05's canceled-order risk flag in the artifact itself.
