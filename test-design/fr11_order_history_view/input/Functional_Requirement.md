@@ -1,6 +1,6 @@
 # FR-11: Order History View (User)
 
-> Pool B - Shopping Cart and Checkout (per HW02 group assignment).
+> Pool B - Shopping Cart and Checkout.
 > Source of truth: EShop System Requirements Specification (README.md, Section 5, FR-11),
 > cross-checked against api_specification.md.
 

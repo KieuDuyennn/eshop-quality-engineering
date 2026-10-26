@@ -61,7 +61,7 @@ row 2 uncited. All sentences in §3 and §5 are fully covered.
   without naming a status code (left to OQ-06/OQ-07); no REQ states a sort
   order. **PASS** - no REQ found that smuggles in an unstated concrete value.
 - **GAP** - the input file's header/overview block (lines 1-5: "Pool B -
-  Shopping Cart and Checkout (per HW02 group assignment)" and "Source of
+  Shopping Cart and Checkout" and "Source of
   truth: ... README.md, Section 5, FR-11") is not decomposed into any REQ,
   Observation, or OQ at all - it was skipped entirely in Phase 1. "Pool B -
   Shopping Cart and Checkout" is a non-obvious pool assignment for a
@@ -164,7 +164,7 @@ Reviewed with the user. Per user decision:
   parameter."
 - Pool B / README §5 categorization gap (Items 2 and 4) - added as a new
   Observation, REQ-22 under a new AREA-09 (Documentation Metadata), noting
-  the mismatch has no test-design impact and is flagged for TA
+  the mismatch has no test-design impact and is flagged for
   clarification.
 
 **DEFERRED (style/low-impact):**
