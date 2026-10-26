@@ -282,7 +282,7 @@ test.describe('FR-13 Dashboard', () => {
       adminToken,
       userToken,
     }) => {
-      test.info().annotations.push({ type: 'HW02 origin', description: row.hw02_ref });
+      test.info().annotations.push({ type: 'Design origin', description: row.hw02_ref });
       test.info().annotations.push({ type: 'Why this case', description: row.note });
       // Preserve the actual Playwright project on every row. This remains reliable
       // even when a legacy run-level BROWSER tag is broad (for example, "all").
