@@ -10,7 +10,6 @@
     "test:fr11": "cross-env FEATURE=fr11 playwright test automation/tests/fr11_order_history",
     "test:fr13": "cross-env FEATURE=fr13 playwright test automation/tests/fr13_dashboard",
     "report": "playwright show-report",
-    "runs:all": "powershell -ExecutionPolicy Bypass -File ./automation/run-all-browsers.ps1",
     "codegen": "playwright codegen"
   },
   "devDependencies": {
