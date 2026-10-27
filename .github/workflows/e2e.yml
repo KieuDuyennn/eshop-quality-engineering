@@ -20,11 +20,18 @@ jobs:
     name: e2e (${{ matrix.browser }})
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    # Official image with all browsers and their system libraries preinstalled,
+    # so no apt download is needed. Keep the tag equal to the @playwright/test
+    # version in e2e/package-lock.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
     strategy:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
     env:
+      # Firefox refuses to run as root unless HOME points at root's home.
+      HOME: /root
       FEATURE: all
       BROWSER: ${{ matrix.browser }}
       BASE_URL: http://localhost:5173
@@ -52,10 +59,6 @@ jobs:
           npm ci --prefix sut/frontend-web
           npm ci --prefix sut/frontend-admin
 
-      - name: Install ${{ matrix.browser }}
-        working-directory: e2e
-        run: npx playwright install --with-deps ${{ matrix.browser }}
-
       # LOADTEST=1 turns off the backend's 200 requests / 15 min limiter. The whole
       # suite runs in one go against one backend and would otherwise hit HTTP 429
       # partway through; no test case exercises the limiter itself.
@@ -70,7 +73,7 @@ jobs:
         run: |
           for url in http://localhost:3000/api/products http://localhost:5173 http://localhost:5174; do
             for i in $(seq 1 60); do
-              if curl -fsS "$url" > /dev/null; then
+              if node -e "fetch(process.argv[1]).then(async r => { await r.arrayBuffer(); process.exitCode = r.ok ? 0 : 1; }, () => { process.exitCode = 1; })" "$url"; then
                 echo "$url is up after ${i}s"
                 continue 2
               fi
