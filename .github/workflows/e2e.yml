@@ -56,10 +56,13 @@ jobs:
         working-directory: e2e
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
+      # LOADTEST=1 turns off the backend's 200 requests / 15 min limiter. The whole
+      # suite runs in one go against one backend and would otherwise hit HTTP 429
+      # partway through; no test case exercises the limiter itself.
       - name: Start SUT
         run: |
           mkdir -p logs
-          (cd sut/backend && node server.js > ../../logs/backend.log 2>&1 &)
+          (cd sut/backend && LOADTEST=1 node server.js > ../../logs/backend.log 2>&1 &)
           (cd sut/frontend-web && npm run dev > ../../logs/frontend-web.log 2>&1 &)
           (cd sut/frontend-admin && npm run dev > ../../logs/frontend-admin.log 2>&1 &)
 
