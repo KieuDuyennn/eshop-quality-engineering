@@ -3,7 +3,8 @@ name: e2e
 # Full Playwright suite against a locally started SUT, one job per browser.
 # Cases that expose open SUT defects are listed in
 # e2e/automation/data/known_failures.json and marked as expected failures, so the
-# job fails only on a new failure or when a listed defect has been fixed.
+# job fails only on a new failure, when a listed defect has been fixed, or when a
+# listed case fails for a reason other than its recorded one.
 on:
   push:
     branches: [main]
@@ -97,6 +98,17 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           SUT_JWT_SECRET: ${{ secrets.SUT_JWT_SECRET }}
         run: npx playwright test --project=${{ matrix.browser }}
+
+      # test.fail() accepts any failure, so a known-defect case broken by something
+      # else (a selector, a setup step) would still count as expected. This step
+      # fails the job unless each one failed with the message in known_failures.json.
+      - name: Check known failures failed for the recorded reason
+        if: always() && hashFiles('e2e/playwright-report/json/*.json') != ''
+        working-directory: e2e
+        run: >
+          node ../.github/scripts/check-known-failures.mjs reasons
+          automation/data/known_failures.json
+          playwright-report/json/all-${{ matrix.browser }}.json
 
       - name: Write job summary
         if: always()

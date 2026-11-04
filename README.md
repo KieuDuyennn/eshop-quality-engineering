@@ -96,8 +96,11 @@ Many e2e tests fail on purpose: they expose real bugs in the SUT rather than bei
 
 Each of these cases is listed in [`e2e/automation/data/known_failures.json`](e2e/automation/data/known_failures.json) with its bug ID and issue link, and is marked with `test.fail()` by a shared fixture. A run therefore passes while those defects are open and fails when:
 
-- any other case fails (a new regression), or
-- a listed case starts passing (its defect was fixed; remove the entry).
+- any other case fails (a new regression),
+- a listed case starts passing (its defect was fixed; remove the entry), or
+- a listed case fails for a different reason than the one recorded in its `expect_error` (for example a broken selector), so a test problem cannot hide behind a known defect.
+
+The `checks` workflow also fails if an entry names a test ID that no longer exists, so a renamed or deleted case cannot leave a stale entry behind.
 
 ## CI
 

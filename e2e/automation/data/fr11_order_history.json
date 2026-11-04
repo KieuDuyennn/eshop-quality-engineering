@@ -600,15 +600,15 @@
     },
     {
       "tc_id": "FR11-TC-45",
-      "title": "two simultaneous cancel requests acknowledge the transition only once",
+      "title": "simultaneous cancel requests acknowledge the transition only once",
       "type": "edge",
       "channel": "api",
       "acting_as": "owner",
-      "seed_owner_orders": [{ "status": "pending" }],
+      "seed_owner_orders": [{ "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }, { "status": "pending" }],
       "api_call": "order_cancel_race",
-      "expect_http_multiset": [200, 400],
+      "expect_http_multiset": [200, 400, 400, 400, 400],
       "expect_final_status": "canceled",
-      "note": "Concurrency probe. Both requests may read pending before either UPDATE completes, causing two 200 responses for one state transition. The required outcome is one success, one refusal, final status canceled. Expected to expose a check-then-update race while remaining deterministic about the final state."
+      "note": "Concurrency probe. PUT /api/orders/:id/cancel reads the status, then updates it without a condition (server.js:337), so concurrent requests can all read pending and all answer 200. Each of the 10 seeded orders gets 5 simultaneous cancels and must produce exactly one success; one pair per run lost the race only now and then on the CI runner, which made the case flaky."
     }
   ]
 }

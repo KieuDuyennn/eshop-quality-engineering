@@ -12,6 +12,8 @@ interface KnownFailure {
   bug: string;
   kind: 'bug' | 'clarification';
   issue: string;
+  /** Substrings the failure must contain; checked after the run by check-known-failures.mjs. */
+  expect_error: string[];
 }
 
 /** tc_id -> the open SUT defect that makes the case fail. See the file's `_meta`. */
