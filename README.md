@@ -99,6 +99,8 @@ Each of these cases is listed in [`e2e/automation/data/known_failures.json`](e2e
 - any other case fails (a new regression), or
 - a listed case starts passing (its defect was fixed; remove the entry).
 
+The `checks` workflow also fails if an entry names a test ID that no longer exists, so a renamed or deleted case cannot leave a stale entry behind.
+
 ## CI
 
 GitHub Actions runs two workflows:
