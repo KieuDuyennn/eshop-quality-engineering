@@ -6,6 +6,18 @@ import { OrderHistoryPage } from '../pages/OrderHistoryPage';
 import { AdminDashboardPage } from '../pages/AdminDashboardPage';
 import { ADMIN_EMAIL, USER_EMAIL, SUT_JWT_SECRET } from '../utils/env';
 import * as api from '../utils/eshop-api';
+import { loadJson } from '../utils/data-loader';
+
+interface KnownFailure {
+  bug: string;
+  kind: 'bug' | 'clarification';
+  issue: string;
+}
+
+/** tc_id -> the open SUT defect that makes the case fail. See the file's `_meta`. */
+const KNOWN_FAILURES = loadJson<{ cases: Record<string, KnownFailure> }>(
+  'known_failures.json',
+).cases;
 
 /**
  * Shared fixtures for the whole suite.
@@ -19,6 +31,7 @@ type Pages = {
   loginPage: LoginPage;
   orderHistoryPage: OrderHistoryPage;
   adminDashboardPage: AdminDashboardPage;
+  knownFailure: void;
 };
 
 type WorkerAuth = {
@@ -38,6 +51,19 @@ export const test = base.extend<Pages, WorkerAuth>({
   loginPage: async ({ page }, use) => { await use(new LoginPage(page)); },
   orderHistoryPage: async ({ page }, use) => { await use(new OrderHistoryPage(page)); },
   adminDashboardPage: async ({ page }, use) => { await use(new AdminDashboardPage(page)); },
+
+  // Runs before every test: a case listed in known_failures.json is expected to fail.
+  // It stays green while its defect is open, and Playwright reports it as an
+  // unexpected pass - a red run - once the defect is fixed and the entry is stale.
+  knownFailure: [async ({}, use, testInfo) => {
+    const tcId = testInfo.title.split(' ')[0];
+    const known = KNOWN_FAILURES[tcId];
+    if (known) {
+      testInfo.annotations.push({ type: 'Known defect', description: `${known.bug} ${known.issue}` });
+      testInfo.fail(true, `${known.bug} (${known.kind})`);
+    }
+    await use();
+  }, { auto: true }],
 
   adminToken: [async ({}, use) => {
     if (!SUT_JWT_SECRET) {
