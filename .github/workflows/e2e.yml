@@ -1,10 +1,13 @@
 name: e2e
 
 # Full Playwright suite against a locally started SUT, one job per browser.
-# Many cases fail on purpose because they expose real SUT defects, so the test
-# step does not fail the job yet; results are published as a summary and report.
+# Cases that expose open SUT defects are listed in
+# e2e/automation/data/known_failures.json and marked as expected failures, so the
+# job fails only on a new failure or when a listed defect has been fixed.
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -86,7 +89,6 @@ jobs:
 
       - name: Run Playwright (${{ matrix.browser }})
         id: tests
-        continue-on-error: true
         working-directory: e2e
         env:
           USER_EMAIL: ${{ secrets.USER_EMAIL }}

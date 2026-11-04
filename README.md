@@ -84,10 +84,23 @@ Summaries are exported to `performance/reports/results/`.
 
 Many e2e tests fail on purpose: they expose real bugs in the SUT rather than being adjusted to pass. The defects are documented in the [bug report](https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/02_Bug_Report.md).
 
+Each of these cases is listed in [`e2e/automation/data/known_failures.json`](e2e/automation/data/known_failures.json) with its bug ID and issue link, and is marked with `test.fail()` by a shared fixture. A run therefore passes while those defects are open and fails when:
+
+- any other case fails (a new regression), or
+- a listed case starts passing (its defect was fixed; remove the entry).
+
+## CI
+
+GitHub Actions runs two workflows:
+
+- **checks** (every push and pull request): type-checks the e2e suite, loads the Playwright config, and starts the backend to confirm it answers.
+- **e2e** (pushes and pull requests to `main`, or manual): starts the full SUT and runs every case on Chromium, Firefox and WebKit in the official Playwright container. Each browser job publishes a results table to the job summary and uploads the HTML report and SUT logs as artifacts.
+
 ## Other work
 
 - [GUI and usability testing](https://github.com/KieuDuyennn/software__testing/tree/main/HW03): manual GUI and usability testing of a support-request flow on a different system (EMS), with defect reports and screenshot evidence. It is not included here because it targets another SUT.
 
 ## Roadmap
 
-- CI pipeline with GitHub Actions (in progress)
+- Standalone API test suite
+- k6 smoke run in CI with SLO thresholds
