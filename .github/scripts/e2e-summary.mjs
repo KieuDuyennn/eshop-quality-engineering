@@ -9,15 +9,31 @@ if (!existsSync(reportPath)) {
   process.exit(0);
 }
 
-const { stats } = JSON.parse(readFileSync(reportPath, 'utf8'));
+const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+const { stats } = report;
+
+// Playwright counts a test.fail() case that did fail as "expected", the same as a
+// pass, so the known-defect cases are split out by their `fail` annotation.
+function* allTests(suite) {
+  for (const spec of suite.specs ?? []) yield* spec.tests;
+  for (const child of suite.suites ?? []) yield* allTests(child);
+}
+const tests = report.suites.flatMap((suite) => [...allTests(suite)]);
+const isKnown = (t) => t.annotations.some((a) => a.type === 'fail');
+const knownDefects = tests.filter((t) => isKnown(t) && t.status === 'expected').length;
+// A known-defect case that passed is "unexpected": its defect looks fixed.
+const fixed = tests.filter((t) => isKnown(t) && t.status === 'unexpected').length;
+const newFailures = stats.unexpected - fixed;
+
 const total = stats.expected + stats.unexpected + stats.flaky + stats.skipped;
 const minutes = (stats.duration / 60000).toFixed(1);
 
 console.log(`### E2E - ${browser}
 
-| Total | Passed | Failed | Flaky | Skipped | Duration |
-| --- | --- | --- | --- | --- | --- |
-| ${total} | ${stats.expected} | ${stats.unexpected} | ${stats.flaky} | ${stats.skipped} | ${minutes} min |
+| Total | Passed | Known defects | New failures | Defect fixed? | Flaky | Skipped | Duration |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ${total} | ${stats.expected - knownDefects} | ${knownDefects} | ${newFailures} | ${fixed} | ${stats.flaky} | ${stats.skipped} | ${minutes} min |
 
-Failures are expected while known SUT defects are open; this job does not gate the pipeline yet.
+Known defects are cases listed in \`e2e/automation/data/known_failures.json\`; they fail as expected and do not fail the job.
+A non-zero "Defect fixed?" means a listed case now passes: remove its entry.
 Download the \`playwright-report-${browser}\` artifact for the full HTML report.`);
