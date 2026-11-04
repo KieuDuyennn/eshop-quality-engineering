@@ -2,7 +2,7 @@
   "_meta": {
     "purpose": "Cases that fail because of an open SUT defect. fixtures/test-fixtures.ts marks each one with test.fail(), so CI stays green while the defect is open, turns red if any other case fails, and also turns red when one of these cases starts passing (the defect was fixed: delete its entry).",
     "source": "Bug report: https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/02_Bug_Report.md",
-    "verified_against": "CI run 40483944025 (2026-10-27): the same 63 cases failed on chromium, firefox and webkit.",
+    "verified_against": "CI run 40483944025 (2026-10-27): the same 63 cases failed on chromium, firefox and webkit. FR11-TC-45 was added on 2026-11-04 after it was rewritten to expose its race reliably.",
     "kinds": "bug = confirmed defect; clarification = the requirement is ambiguous and the case encodes one reading of it (ISSUE-FR01-12 to 14)"
   },
   "cases": {
@@ -49,6 +49,7 @@
     "FR11-TC-36": { "bug": "BUG-FR11-14", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/31" },
     "FR11-TC-42": { "bug": "BUG-FR11-15", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/32" },
     "FR11-TC-43": { "bug": "BUG-FR11-16", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/33" },
+    "FR11-TC-45": { "bug": "BUG-FR11-17", "kind": "bug", "issue": "not filed yet" },
 
     "FR13-TC-02": { "bug": "BUG-FR13-01", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/15" },
     "FR13-TC-13b": { "bug": "BUG-FR13-01", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/15" },
