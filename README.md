@@ -10,8 +10,18 @@ Test design, end-to-end and performance test suites for the EShop web applicatio
 | `performance/` | k6 baseline and spike scenarios against the backend API, with SLO targets of p95 < 500 ms and error rate < 1%. Also includes one AI-drafted scenario (`k6/realistic-shopping.ai.js`) that was audited and refined. |
 | `test-design/` | Black-box test design for four features (FR-01, FR-06, FR-11, FR-13): requirements breakdown, equivalence partitioning, domain test cases, boundary value analysis and gap notes. The FR-01, FR-11 and FR-13 designs are the basis of the `e2e/` suite. |
 | `sut/` | The EShop app under test: `backend/` (Express + SQLite), `frontend-web/` (customer site) and `frontend-admin/` (admin dashboard). |
+| `.claude/skills/` | The two AI agent skills used to produce `test-design/` and `e2e/`: `domain-testing-bva` (test case design) and `playwright-automation` (test data and scripts). See [AI-assisted test design](#ai-assisted-test-design). |
 
 > **Note:** the SUT intentionally contains insecure code (for example, a hardcoded JWT secret in `sut/backend/server.js`). It is a test target, not production code.
+
+## AI-assisted test design
+
+The test cases and test data were drafted with Claude Code, using two skills I wrote for this ([`.claude/skills/`](.claude/skills/README.md)). Each skill makes the AI follow a fixed workflow and stop for my approval at every step, so it drafts and I review:
+
+- **`domain-testing-bva`**: requirement → atomic requirements → equivalence classes → domain test cases → boundary values. It flags anything the requirement does not state as an open question, and checks classes against the backend source.
+- **`playwright-automation`**: designed cases → selectors verified on the live app → external CSV/JSON data → page objects and specs → three-browser run → failure triage.
+
+The review is documented: an [AI review log](https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/test-plan/AI_Review_Gap_Analysis.md) records 39 corrections to AI-generated scripts and data, and each `test-design/` feature has `gap_notes.md` with my critique of every AI-drafted phase.
 
 ## Results
 
