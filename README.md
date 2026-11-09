@@ -107,10 +107,11 @@ The `checks` workflow also fails if an entry names a test ID that no longer exis
 
 ## CI
 
-GitHub Actions runs two workflows:
+GitHub Actions runs three workflows:
 
 - **checks** (every push and pull request): type-checks the e2e suite, loads the Playwright config, and starts the backend to confirm it answers.
 - **e2e** (pushes and pull requests to `main`, or manual): starts the full SUT and runs every case on Chromium, Firefox and WebKit in the official Playwright container. Each browser job publishes a results table to the job summary and uploads the HTML report and SUT logs as artifacts.
+- **perf** (daily, manual, and pull requests that change `sut/backend/` or `performance/`): starts the backend with `LOADTEST=1` and runs the k6 smoke test ([`performance/k6/smoke.js`](performance/k6/smoke.js), 5 VUs for 30 s). Its thresholds fail the job when p95 latency reaches 500 ms or the error rate reaches 1%. The k6 summary is uploaded as an artifact.
 
 ## Other work
 
@@ -119,4 +120,3 @@ GitHub Actions runs two workflows:
 ## Roadmap
 
 - Standalone API test suite
-- k6 smoke run in CI with SLO thresholds
