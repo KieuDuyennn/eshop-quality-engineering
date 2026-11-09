@@ -50,7 +50,7 @@
     "FR11-TC-36": { "bug": "BUG-FR11-14", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/31", "expect_error": ["indistinguishable from an empty history"] },
     "FR11-TC-42": { "bug": "BUG-FR11-15", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/32", "expect_error": ["malformed orders payload crashed the profile"] },
     "FR11-TC-43": { "bug": "BUG-FR11-16", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/33", "expect_error": ["my-orders:", "answered 200"] },
-    "FR11-TC-45": { "bug": "BUG-FR11-17", "kind": "bug", "issue": "not filed yet", "expect_error": ["acknowledged the same cancel more than once"] },
+    "FR11-TC-45": { "bug": "BUG-FR11-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/eshop-quality-engineering/issues/3", "expect_error": ["acknowledged the same cancel more than once"] },
 
     "FR13-TC-02": { "bug": "BUG-FR13-01", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/15", "expect_error": ["revenue vs sum of delivered orders mismatch"] },
     "FR13-TC-13b": { "bug": "BUG-FR13-01", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/15", "expect_error": ["revenue moved by the wrong amount"] },
