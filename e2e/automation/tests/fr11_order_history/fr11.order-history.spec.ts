@@ -468,21 +468,31 @@ test.describe('FR-11 Order history view', () => {
           }
 
           case 'order_cancel_race': {
-            const target = seededIds[0];
-            const responses = await Promise.all([
-              api.cancelRaw(request, token, target),
-              api.cancelRaw(request, token, target),
-            ]);
-            const actual = responses.map((response) => response.status()).sort((a, b) => a - b);
+            // One race per seeded order, each firing as many simultaneous requests as the
+            // multiset has entries. A single pair loses the race only now and then on a
+            // fast runner, which made this case flaky; many wide races make the
+            // check-then-update defect show up on every run while each race stays exact.
             const expected = [...row.expect_http_multiset!].sort((a, b) => a - b);
+            const outcomes: string[] = [];
+            for (const target of seededIds) {
+              const responses = await Promise.all(
+                expected.map(() => api.cancelRaw(request, token, target)),
+              );
+              const actual = responses.map((response) => response.status()).sort((a, b) => a - b);
+              if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+                outcomes.push(`#${target} answered [${actual.join(', ')}]`);
+              }
+            }
             expect(
-              actual,
-              `${row.tc_id}: two simultaneous cancel requests must produce one success and ` +
-              `one refusal, not acknowledge the same state transition twice`,
-            ).toEqual(expected);
-            const after = (await api.myOrders(request, ownerToken)).find((o) => o.id === target);
-            expect(after?.status, `${row.tc_id}: final status after the race`)
-              .toBe(row.expect_final_status);
+              outcomes,
+              `${row.tc_id}: ${outcomes.length} of ${seededIds.length} orders acknowledged the ` +
+              `same cancel more than once; each race must produce exactly [${expected.join(', ')}]`,
+            ).toEqual([]);
+            const mine = await api.myOrders(request, ownerToken);
+            for (const target of seededIds) {
+              expect(mine.find((o) => o.id === target)?.status, `${row.tc_id}: final status of #${target}`)
+                .toBe(row.expect_final_status);
+            }
             break;
           }
 
