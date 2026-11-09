@@ -27,12 +27,15 @@ The review is documented: an [AI review log](https://github.com/KieuDuyennn/soft
 
 - **139 data-driven cases**: FR-01 has 43, FR-11 has 46 and FR-13 has 50.
 - **417 executions** across 3 browsers (Chromium, Firefox, WebKit).
-- **45 confirmed defects** across the three features (FR-01: 23, FR-11: 16, FR-13: 6); the 23 FR-01 defects trace back to 5 shared root causes.
+- **46 confirmed defects** across the three features (FR-01: 23, FR-11: 17, FR-13: 6); the 23 FR-01 defects trace back to 5 shared root causes.
 - Example defects:
   - The registration API accepts requests with missing required fields and still creates accounts.
   - Checkout stores `total_amount` as sent by the client, without recalculating it on the server.
+  - Order cancellation has a race condition: concurrent cancel requests for the same order are all accepted.
 
 Original reports: [main report](https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/01_Main_Report.md), [bug report](https://github.com/KieuDuyennn/software__testing/blob/main/HW04/docs/02_Bug_Report.md) and [HTML/JSON run reports](https://github.com/KieuDuyennn/software__testing/tree/main/HW04/reports/final) in `software__testing/HW04`.
+
+Defects found after the move to this repo are tracked in this repo's [Issues](https://github.com/KieuDuyennn/eshop-quality-engineering/issues?q=is%3Aissue%20label%3Abug).
 
 ## Provenance
 
