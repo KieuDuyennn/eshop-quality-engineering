@@ -1,6 +1,7 @@
 // Smoke test: a short, light run that fails the job when an SLO is broken.
 // 5 VUs for 30 s against the public read endpoints. The thresholds make k6 exit
-// non-zero (exit code 99) when p95 latency or the error rate is over target.
+// non-zero (exit code 99) when p95 latency or the error rate is over target, or
+// when more than 1% of the response checks fail.
 // Run with the backend started using LOADTEST=1.
 
 import http from 'k6/http';
@@ -13,6 +14,9 @@ export const options = {
   thresholds: {
     http_req_duration: ['p(95)<500'],
     http_req_failed: ['rate<0.01'],
+    // A 200 with a wrong body is not counted by http_req_failed, so the body
+    // checks need their own threshold to fail the run.
+    checks: ['rate>0.99'],
   },
 };
 
