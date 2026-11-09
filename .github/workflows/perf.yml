@@ -1,0 +1,81 @@
+name: perf
+
+# k6 smoke test against a locally started backend. The thresholds in
+# performance/k6/smoke.js make k6 exit non-zero when an SLO is broken
+# (p95 >= 500 ms or error rate >= 1%), which fails this job.
+on:
+  schedule:
+    - cron: "0 2 * * *" # daily, 02:00 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "sut/backend/**"
+      - "performance/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: perf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  k6-smoke:
+    name: k6 smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BASE_URL: http://localhost:3000
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sut/backend/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci --prefix sut/backend
+
+      # LOADTEST=1 turns off the backend's 200 requests / 15 min limiter, which
+      # the smoke run would otherwise hit within seconds.
+      - name: Start backend
+        run: |
+          mkdir -p logs
+          (cd sut/backend && LOADTEST=1 node server.js > ../../logs/backend.log 2>&1 &)
+
+      - name: Wait for backend
+        run: |
+          for i in $(seq 1 60); do
+            if node .github/scripts/url-ready.mjs "$BASE_URL/api/products"; then
+              echo "Backend is up after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Backend did not respond within 60s"
+          tail -n 50 logs/backend.log
+          exit 1
+
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run k6 smoke test
+        run: |
+          mkdir -p performance/reports/results
+          k6 run performance/k6/smoke.js \
+            --summary-export performance/reports/results/smoke-summary.json \
+            -e BASE_URL="$BASE_URL"
+
+      - name: Upload k6 summary and backend log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-smoke-summary
+          path: |
+            performance/reports/results/smoke-summary.json
+            logs/backend.log
+          if-no-files-found: warn
