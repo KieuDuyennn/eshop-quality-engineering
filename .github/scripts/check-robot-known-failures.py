@@ -2,12 +2,14 @@
 
 Usage:
   python check-robot-known-failures.py <output.xml> <known_failures.json>
+      [--summary FILE] [--title TITLE]
 
 The suite runs with --skiponfailure known-bug, so a known defect shows up as a skipped
 test. This script fails the job when a known-bug test passed (the defect was fixed),
 failed for a reason other than its recorded one, has no entry, or an entry has no
 test, and when any other test did not pass or a token or the JWT key reached
 output.xml.
+With --summary it appends a Markdown run summary to FILE.
 """
 
 from __future__ import annotations
@@ -133,10 +135,35 @@ def find_problems(results: list[TestResult], known: dict[str, dict], output_text
     return problems
 
 
+def summary_markdown(results: list[TestResult], known: dict[str, dict], title: str) -> str:
+    counts = Counter(result.status for result in results)
+    lines = [
+        f"## {title}",
+        "",
+        "| Passed | Skipped (known defects) | Failed |",
+        "| --- | --- | --- |",
+        f"| {counts['PASS']} | {counts['SKIP']} | {counts['FAIL']} |",
+        "",
+        "| Test | Defect | Issue | Result |",
+        "| --- | --- | --- | --- |",
+    ]
+    status_of = {result.test_id: result.status for result in results}
+    for test_id, entry in known.items():
+        if not isinstance(entry, dict):
+            continue
+        issue = entry.get("issue") or "not filed yet"
+        lines.append(
+            f"| {test_id} | {entry.get('bug')} | {issue} | {status_of.get(test_id, 'missing')} |"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("output_xml", type=Path, help="Robot output.xml")
     parser.add_argument("known_failures", type=Path, help="api-robot/data/known_failures.json")
+    parser.add_argument("--summary", type=Path, help="append a Markdown run summary to this file")
+    parser.add_argument("--title", default="api-robot", help="heading of the summary")
     args = parser.parse_args()
     # Windows runners print through cp1252; a Vietnamese server message must not crash
     # the report of the problems.
@@ -145,6 +172,10 @@ def main() -> int:
     results = read_results(args.output_xml)
     known = json.loads(args.known_failures.read_text(encoding="utf-8"))["cases"]
     problems = find_problems(results, known, args.output_xml.read_text(encoding="utf-8"))
+
+    if args.summary:
+        with args.summary.open("a", encoding="utf-8") as handle:
+            handle.write(summary_markdown(results, known, args.title))
 
     print(f"Checked {len(results)} tests against {len(known)} known-failure entries.")
     if problems:
