@@ -31,3 +31,7 @@ sut/backend/*.sqlite
 
 # k6 run output (written by performance/scripts/*.sh)
 performance/reports/
+
+# Python virtual environment and bytecode for api-robot
+.venv/
+__pycache__/
