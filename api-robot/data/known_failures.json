@@ -12,6 +12,15 @@
     "FR01-TC-11": {"bug": "BUG-FR01-11", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/49", "expect_error": ["register status: expected 400, answered 200"]},
     "FR01-API-01": {"bug": "BUG-FR01-15", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/53", "expect_error": ["register status: expected 400, answered 200"]},
     "FR01-API-02": {"bug": "BUG-FR01-16", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/54", "expect_error": ["register status: expected 400, answered 200"]},
-    "FR01-API-03": {"bug": "BUG-FR01-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/55", "expect_error": ["register status: expected 400, answered 200"]}
+    "FR01-API-03": {"bug": "BUG-FR01-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/55", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-04": {"bug": "BUG-FR01-18", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/56", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-05": {"bug": "BUG-FR01-19", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/57", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-06": {"bug": "BUG-FR01-20", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/58", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-07": {"bug": "BUG-FR01-21", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/59", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-08": {"bug": "BUG-FR01-22", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/60", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-09": {"bug": "BUG-FR01-23", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/61", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-10": {"bug": "BUG-FR01-24", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/62", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-11": {"bug": "BUG-FR01-25", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/63", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-12": {"bug": "BUG-FR01-26", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/64", "expect_error": ["register status: expected 400, answered 200"]}
   }
 }
