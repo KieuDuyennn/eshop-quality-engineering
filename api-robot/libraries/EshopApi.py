@@ -29,6 +29,19 @@ from robot.api.deco import keyword, library
 from robot.libraries.BuiltIn import BuiltIn
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "e2e" / "automation" / "data"
+MALFORMED_TOKEN = "not.a.valid.jwt"
+DASHBOARD_API_ACTORS = frozenset(
+    {
+        "admin",
+        "non_admin",
+        "anonymous",
+        "malformed_token",
+        "expired_token",
+        "signed_missing_role",
+        "signed_nonexistent_admin",
+        "throwaway_user",
+    }
+)
 NONEXISTENT_USER_ID = 2_147_483_647
 STATUS_STEPS = MappingProxyType(
     {
@@ -223,10 +236,12 @@ class EshopApi:
     def crafted_auth_header(self, actor: str) -> RedactedDict:
         """Returns the auth header for an ``actor`` that login cannot produce.
 
-        ``ghost`` is a token for a user id that does not exist, signed with the SUT
-        key from the ``SUT_JWT_SECRET`` environment variable, the same way the
-        Playwright suite mints it.
+        ``malformed_token`` is not a JWT at all. ``ghost`` is a token for a user id
+        that does not exist, signed with the SUT key from the ``SUT_JWT_SECRET``
+        environment variable, the same way the Playwright suite mints it.
         """
+        if actor == "malformed_token":
+            return _bearer(MALFORMED_TOKEN)
         claims = {
             "ghost": {"id": NONEXISTENT_USER_ID, "role": "user"},
         }
@@ -307,6 +322,17 @@ class EshopApi:
             raise AssertionError(f"{file_name}: {tc_id} lacks {', '.join(missing)}")
         if "seed_owner_orders" in case and not case["seed_owner_orders"]:
             raise AssertionError(f"{file_name}: {tc_id} has an empty seed_owner_orders")
+        return case
+
+    @keyword
+    def load_dashboard_case(self, tc_id: str) -> dict[str, Any]:
+        """Reads one ``layer=api`` case of ``fr13_dashboard.json``."""
+        file_name = "fr13_dashboard.json"
+        case = _find_case(_load_json_cases(file_name), tc_id, file_name)
+        if case.get("layer") != "api":
+            raise AssertionError(f"{file_name}: {tc_id} is not an api case")
+        if case.get("actor") not in DASHBOARD_API_ACTORS:
+            raise AssertionError(f"{file_name}: {tc_id} has unknown actor {case.get('actor')}")
         return case
 
     @keyword
