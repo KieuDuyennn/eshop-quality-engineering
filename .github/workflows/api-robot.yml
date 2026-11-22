@@ -83,12 +83,21 @@ jobs:
           SUT_JWT_SECRET: ${{ secrets.SUT_JWT_SECRET }}
         run: robot --skiponfailure known-bug --outputdir api-robot/results api-robot/tests
 
-      - name: Check known defects failed for the recorded reason
+      - name: Check known defects and write job summary
         if: always() && hashFiles('api-robot/results/output.xml') != ''
         run: >
           python .github/scripts/check-robot-known-failures.py
           api-robot/results/output.xml
           api-robot/data/known_failures.json
+          --summary "$GITHUB_STEP_SUMMARY"
+          --title "api-robot (${{ matrix.os }})"
+
+      - name: Generate keyword documentation
+        if: always()
+        run: |
+          mkdir -p api-robot/results/libdoc
+          python -m robot.libdoc api-robot/libraries/EshopApi.py api-robot/results/libdoc/EshopApi.html
+          python -m robot.libdoc api-robot/resources/api.resource api-robot/results/libdoc/api.html
 
       - name: Upload Robot results
         if: always()
