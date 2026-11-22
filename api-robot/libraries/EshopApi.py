@@ -112,6 +112,20 @@ class EshopApi:
         return value
 
     @keyword
+    def new_user_credentials(self, email: str, name: str) -> RedactedDict:
+        """Returns a register body for ``email`` with ``${NEW_USER_PASSWORD}``.
+
+        The password is read here, not passed in, so it never shows up as a keyword
+        argument in a TRACE log.
+        """
+        return self.credentials(email, self._variable("${NEW_USER_PASSWORD}"), name=name)
+
+    @keyword
+    def credentials_with_wrong_password(self, credentials: Mapping[str, Any]) -> RedactedDict:
+        """Returns a copy of ``credentials`` whose password is not the registered one."""
+        return RedactedDict(credentials, password=f"{credentials['password']}-wrong")
+
+    @keyword
     def load_registration_case(self, tc_id: str) -> dict[str, Any]:
         """Reads one ``level=api`` row of ``fr01_registration.csv``.
 
