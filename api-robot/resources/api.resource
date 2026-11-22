@@ -10,6 +10,7 @@ Library             RequestsLibrary
 Resource            variables.resource
 Library             ../libraries/EshopApi.py
 ...                     api_url=${API_URL}
+...                     admin_email=${ADMIN_EMAIL}
 ...                     request_timeout=${REQUEST_TIMEOUT}
 
 
