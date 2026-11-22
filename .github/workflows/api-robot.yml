@@ -96,7 +96,7 @@ jobs:
         if: always()
         run: |
           mkdir -p api-robot/results/libdoc
-          python -m robot.libdoc api-robot/libraries/EshopApi.py api-robot/results/libdoc/EshopApi.html
+          python -m robot.libdoc api-robot/libraries/EshopApi/ api-robot/results/libdoc/EshopApi.html
           python -m robot.libdoc api-robot/resources/api.resource api-robot/results/libdoc/api.html
 
       - name: Upload Robot results
