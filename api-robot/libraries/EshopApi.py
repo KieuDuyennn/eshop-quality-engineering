@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import base64
 import csv
+import hashlib
+import hmac
 import json
+import os
 import socket
 import time
 from collections.abc import Mapping
@@ -17,6 +21,7 @@ from robot.api.deco import keyword, library
 from robot.libraries.BuiltIn import BuiltIn
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "e2e" / "automation" / "data"
+NONEXISTENT_USER_ID = 2_147_483_647
 STATUS_STEPS = MappingProxyType(
     {
         "pending": (),
@@ -78,6 +83,17 @@ def _redact(value: object) -> object:
     if isinstance(value, list):
         return [_redact(item) for item in value]
     return value
+
+
+def _base64url(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def _sign_hs256(secret: str, claims: dict[str, Any]) -> str:
+    header = _base64url(json.dumps({"alg": "HS256", "typ": "JWT"}, separators=(",", ":")).encode())
+    payload = _base64url(json.dumps(claims, separators=(",", ":")).encode())
+    signature = hmac.new(secret.encode(), f"{header}.{payload}".encode(), hashlib.sha256).digest()
+    return f"{header}.{payload}.{_base64url(signature)}"
 
 
 def _bearer(token: str) -> RedactedDict:
@@ -193,6 +209,27 @@ class EshopApi:
         that a TRACE log level would print.
         """
         return _bearer(response.json()["token"])
+
+    @keyword
+    def crafted_auth_header(self, actor: str) -> RedactedDict:
+        """Returns the auth header for an ``actor`` that login cannot produce.
+
+        ``ghost`` is a token for a user id that does not exist, signed with the SUT
+        key from the ``SUT_JWT_SECRET`` environment variable, the same way the
+        Playwright suite mints it.
+        """
+        claims = {
+            "ghost": {"id": NONEXISTENT_USER_ID, "role": "user"},
+        }
+        if actor not in claims:
+            raise AssertionError(f"no crafted token is defined for actor '{actor}'")
+        secret = os.environ.get("SUT_JWT_SECRET")
+        if not secret:
+            raise AssertionError(
+                "SUT_JWT_SECRET is not set. Tests tagged needs-jwt-secret sign their "
+                "token with the SUT key: set it to SECRET_KEY from sut/backend/server.js."
+            )
+        return _bearer(_sign_hs256(secret, claims[actor]))
 
     @keyword
     def load_registration_case(self, tc_id: str) -> dict[str, Any]:
