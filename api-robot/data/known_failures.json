@@ -21,6 +21,12 @@
     "FR01-API-09": {"bug": "BUG-FR01-23", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/61", "expect_error": ["register status: expected 400, answered 200"]},
     "FR01-API-10": {"bug": "BUG-FR01-24", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/62", "expect_error": ["register status: expected 400, answered 200"]},
     "FR01-API-11": {"bug": "BUG-FR01-25", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/63", "expect_error": ["register status: expected 400, answered 200"]},
-    "FR01-API-12": {"bug": "BUG-FR01-26", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/64", "expect_error": ["register status: expected 400, answered 200"]}
+    "FR01-API-12": {"bug": "BUG-FR01-26", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/64", "expect_error": ["register status: expected 400, answered 200"]},
+
+    "FR11-TC-03": {"bug": "BUG-FR11-01", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/18", "expect_error": ["order detail: expected one of [401, 403, 404], answered 200"]},
+    "FR11-TC-15": {"bug": "BUG-FR11-03", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/20", "expect_error": ["order detail: expected one of [401, 403], answered 200"]},
+    "FR11-TC-18": {"bug": "BUG-FR11-04", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/21", "expect_error": ["admin order list: expected one of [401, 403], answered 200"]},
+    "FR11-TC-43": {"bug": "BUG-FR11-16", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/33", "expect_error": ["my-orders: expected one of [401, 403], answered 200"]},
+    "FR11-TC-35": {"bug": "BUG-FR11-13", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/30", "expect_error": ["checkout: expected one of [400, 422], answered 200"]}
   }
 }
