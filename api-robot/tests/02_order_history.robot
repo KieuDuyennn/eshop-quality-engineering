@@ -1,7 +1,8 @@
 *** Settings ***
 Documentation       FR-11 order history through the API. The FR11 cases are the channel=api
 ...                 cases of e2e/automation/data/fr11_order_history.json, each run through
-...                 the flow its api_call names.
+...                 the flow its api_call names. The RF-ORD cases cover a plain cancel and
+...                 a cancel by another user.
 
 Library             Collections
 Resource            ../resources/api.resource
@@ -18,6 +19,8 @@ Test Tags           fr11
 ...                     admin_orders_list=Admin Order List Should Be Answered As Designed
 ...                     my_orders=My Orders Should Be Answered As Designed
 ...                     checkout=Checkout Should Be Answered As Designed
+...                     admin_set_status=Status Change Should Be Answered As Designed
+...                     order_cancel=Cancel Should Be Answered As Designed
 
 
 *** Test Cases ***
@@ -75,6 +78,82 @@ FR11-TC-35 Checkout Rejects Non Numeric Total
     ...    no order. FR11-TC-35, diagnostic for TC-31 TC-33 TC-34.
     [Tags]    regression    known-bug
     FR11-TC-35
+
+FR11-TC-19 Non Admin Cannot Change Order Status
+    [Documentation]    A non-admin token on PUT /api/admin/orders/:id/status is refused with
+    ...    401 or 403 and the status stays pending. FR11-TC-19.
+    [Tags]    regression    known-bug
+    FR11-TC-19
+
+FR11-TC-22 Canceled Order Cannot Become Delivered
+    [Documentation]    canceled to delivered answers 400 and the order stays canceled.
+    ...    FR11-TC-22.
+    [Tags]    regression    known-bug
+    FR11-TC-22
+
+FR11-TC-24 Transition Skipping The Chain Is Refused
+    [Documentation]    pending to delivered answers 400 and the order stays pending. Control
+    ...    for FR11-TC-22. FR11-TC-24.
+    [Tags]    regression
+    FR11-TC-24
+
+FR11-TC-25 Unknown Status Value Is Refused
+    [Documentation]    pending to hacked answers 400 and the order stays pending. FR11-TC-25,
+    ...    HW02 EC-14.
+    [Tags]    regression
+    FR11-TC-25
+
+FR11-TC-27 Shipping Order Cannot Be Canceled
+    [Documentation]    The cancel endpoint refuses a shipping order with 400 and the order stays
+    ...    shipping. FR11-TC-27.
+    [Tags]    regression    known-bug
+    FR11-TC-27
+
+FR11-TC-28 Another Users Order Cannot Be Canceled
+    [Documentation]    Cancelling another user's pending order answers 404 and the order stays
+    ...    pending. Control for FR11-TC-03. FR11-TC-28.
+    [Tags]    regression
+    FR11-TC-28
+
+FR11-TC-29 Canceled Order Cannot Be Canceled Again
+    [Documentation]    Cancelling a canceled order answers 400. FR11-TC-29.
+    [Tags]    regression
+    FR11-TC-29
+
+FR11-TC-30 Delivered Order Cannot Be Canceled
+    [Documentation]    Cancelling a delivered order answers 400 and the order stays delivered.
+    ...    FR11-TC-30.
+    [Tags]    regression
+    FR11-TC-30
+
+FR11-TC-44 Cancel Without Token Is Refused
+    [Documentation]    The cancel endpoint without a token answers 401 and the order stays
+    ...    pending. FR11-TC-44.
+    [Tags]    regression
+    FR11-TC-44
+
+RF-ORD-01 Owner Cancels A Pending Order
+    [Documentation]    The owner cancels a pending order once: 200, and the order reads back
+    ...    as canceled. New check, RF-ORD-01.
+    [Tags]    smoke
+    [Template]    NONE
+    ${owner_auth}=    Register And Log In New User
+    ${order_id}=    Place Order As    ${owner_auth}
+    ${response}=    Cancel Order As    ${owner_auth}    ${order_id}
+    Status Should Be    ${response}    200    RF-ORD-01 cancel
+    Order Should Hold Status    ${owner_auth}    ${order_id}    canceled    RF-ORD-01 read back
+
+RF-ORD-02 Other User Cannot Cancel An Order
+    [Documentation]    User B cancelling user A's order answers 404 and the order stays
+    ...    pending. New check, RF-ORD-02.
+    [Tags]    regression
+    [Template]    NONE
+    ${user_a_auth}=    Register And Log In New User
+    ${user_b_auth}=    Register And Log In New User
+    ${order_id}=    Place Order As    ${user_a_auth}
+    ${response}=    Cancel Order As    ${user_b_auth}    ${order_id}
+    Status Should Be    ${response}    404    RF-ORD-02 cancel by another user
+    Order Should Hold Status    ${user_a_auth}    ${order_id}    pending    RF-ORD-02 read back
 
 
 *** Keywords ***
@@ -193,4 +272,39 @@ Checkout Should Be Answered As Designed
         IF    $created is not None
             Fail    ${case}[tc_id] checkout: total ${case}[checkout_total_amount] was stored as order ${created_id}
         END
+    END
+
+Status Change Should Be Answered As Designed
+    [Documentation]    Sends the case's status change for the seeded order and checks the
+    ...    status. A refused change must leave the order in ``transition_from``.
+    [Arguments]    ${case}    ${context}
+    VAR    ${order_id}=    ${context}[seeded_ids][0]
+    ${response}=    Set Order Status As    ${context}[auth]    ${order_id}    ${case}[set_status]
+    Run Keyword And Continue On Failure    Status Should Be Among
+    ...    ${response}    ${case}[expect_http_any_of]    ${case}[tc_id] set status
+    ${refusal}=    Refusal Is Expected    ${case}
+    IF    ${refusal}
+        Order Should Hold Status
+        ...    ${context}[owner_auth]    ${order_id}    ${case}[transition_from]    ${case}[tc_id] read back
+    END
+
+Cancel Should Be Answered As Designed
+    [Documentation]    Cancels the seeded order, or the other user's order, and checks the
+    ...    status. A refused cancel must leave the order in ``cancel_target_status``, read
+    ...    through the account that owns it.
+    [Arguments]    ${case}    ${context}
+    IF    $case['cancel_owned_by'] == 'other'
+        VAR    ${order_id}=    ${context}[other_ids][0]
+        VAR    ${order_owner_auth}=    ${context}[other_auth]
+    ELSE
+        VAR    ${order_id}=    ${context}[seeded_ids][0]
+        VAR    ${order_owner_auth}=    ${context}[owner_auth]
+    END
+    ${response}=    Cancel Order As    ${context}[auth]    ${order_id}
+    Run Keyword And Continue On Failure    Status Should Be Among
+    ...    ${response}    ${case}[expect_http_any_of]    ${case}[tc_id] cancel
+    ${refusal}=    Refusal Is Expected    ${case}
+    IF    ${refusal}
+        Order Should Hold Status
+        ...    ${order_owner_auth}    ${order_id}    ${case}[cancel_target_status]    ${case}[tc_id] read back
     END
