@@ -1,8 +1,8 @@
 *** Settings ***
-Documentation       Checks that the backend serves its product list before the feature
-...                 suites run.
+Documentation    Checks that the backend serves its product list before the feature
+...              suites run.
 
-Resource            ../resources/api.resource
+Resource         ../resources/api.resource
 
 
 *** Test Cases ***

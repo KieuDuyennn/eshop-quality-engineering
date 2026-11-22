@@ -1,22 +1,22 @@
 *** Settings ***
-Documentation       Starts the EShop backend once for the whole run and stops it at the end.
+Documentation     Starts the EShop backend once for the whole run and stops it at the end.
 ...
-...                 database.js drops and re-seeds every table on start, so each run begins
-...                 from a clean database. LOADTEST=1 turns off the 200 requests per 15
-...                 minutes limiter, which a full run would hit; no test here exercises it.
+...               database.js drops and re-seeds every table on start, so each run begins
+...               from a clean database. LOADTEST=1 turns off the 200 requests per 15
+...               minutes limiter, which a full run would hit; no test here exercises it.
 
-Library             OperatingSystem
-Library             Process
-Resource            ../resources/api.resource
+Library           OperatingSystem
+Library           Process
+Resource          ../resources/api.resource
 
-Suite Setup         Start Backend
-Suite Teardown      Terminate All Processes
+Suite Setup       Start Backend
+Suite Teardown    Terminate All Processes
 
 
 *** Variables ***
-${BACKEND_DIR}      ${CURDIR}${/}..${/}..${/}sut${/}backend
-${RESULTS_DIR}      ${CURDIR}${/}..${/}results
-${BACKEND_LOG}      ${RESULTS_DIR}${/}backend.log
+${BACKEND_DIR}    ${CURDIR}${/}..${/}..${/}sut${/}backend
+${RESULTS_DIR}    ${CURDIR}${/}..${/}results
+${BACKEND_LOG}    ${RESULTS_DIR}${/}backend.log
 
 
 *** Keywords ***
