@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "purpose": "Robot tests that fail because of an open SUT defect. They carry the known-bug tag and run with --skiponfailure known-bug, so a known defect is reported as skipped instead of failing the run.",
+    "source": "Bug IDs and issue links are the ones in e2e/automation/data/known_failures.json for the same defect.",
+    "verified_against": "Local runs on 2026-11-21 against the backend that tests/__init__.robot starts: each listed test failed with the messages in expect_error.",
+    "kinds": "bug = confirmed defect, same meaning as in the e2e file",
+    "expect_error": "Substrings that must all appear in the failure message. .github/scripts/check-robot-known-failures.py fails the job when a listed test passed, failed for another reason, or has no entry."
+  },
+  "cases": {
+    "FR01-TC-03": {"bug": "BUG-FR01-09", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/47", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-TC-05": {"bug": "BUG-FR01-10", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/48", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-TC-11": {"bug": "BUG-FR01-11", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/49", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-01": {"bug": "BUG-FR01-15", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/53", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-02": {"bug": "BUG-FR01-16", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/54", "expect_error": ["register status: expected 400, answered 200"]},
+    "FR01-API-03": {"bug": "BUG-FR01-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/55", "expect_error": ["register status: expected 400, answered 200"]}
+  }
+}

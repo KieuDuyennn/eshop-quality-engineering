@@ -16,6 +16,36 @@ FR01-TC-01b Valid Registration Creates A Usable Account
     [Tags]    smoke
     FR01-TC-01b
 
+FR01-TC-03 Missing Name Key Is Rejected
+    [Documentation]    A register body without the name key answers 400. FR01-TC-03, EC-29.
+    [Tags]    regression    known-bug
+    FR01-TC-03
+
+FR01-TC-05 Missing Email Key Is Rejected
+    [Documentation]    A register body without the email key answers 400. FR01-TC-05, EC-29.
+    [Tags]    regression    known-bug
+    FR01-TC-05
+
+FR01-TC-11 Missing Password Key Is Rejected
+    [Documentation]    A register body without the password key answers 400. FR01-TC-11, EC-29.
+    [Tags]    regression    known-bug
+    FR01-TC-11
+
+FR01-API-01 Empty Name Is Rejected
+    [Documentation]    An empty name answers 400 and creates no account. FR01-API-01, EC-29.
+    [Tags]    regression    known-bug
+    FR01-API-01
+
+FR01-API-02 Empty Email Is Rejected
+    [Documentation]    An empty email answers 400 and creates no account. FR01-API-02, EC-29.
+    [Tags]    regression    known-bug
+    FR01-API-02
+
+FR01-API-03 Empty Password Is Rejected
+    [Documentation]    An empty password answers 400 and creates no account. FR01-API-03, EC-29.
+    [Tags]    regression    known-bug
+    FR01-API-03
+
 
 *** Keywords ***
 Register Request Should Get The Designed Answer
