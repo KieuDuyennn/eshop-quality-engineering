@@ -54,3 +54,15 @@ Get Products
     [Documentation]    Requests the product list without a token.
     ${response}=    Send Request    GET    /api/products
     RETURN    ${response}
+
+Register Account
+    [Documentation]    Sends ``body`` to ``POST /api/register`` and returns the response.
+    [Arguments]    ${body}
+    ${response}=    Send Request    POST    /api/register    json=${body}
+    RETURN    ${response}
+
+Log In
+    [Documentation]    Sends ``credentials`` to ``POST /api/login`` and returns the response.
+    [Arguments]    ${credentials}
+    ${response}=    Send Request    POST    /api/login    json=${credentials}
+    RETURN    ${response}
