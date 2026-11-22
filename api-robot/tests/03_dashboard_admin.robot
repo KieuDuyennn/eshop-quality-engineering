@@ -19,6 +19,8 @@ Test Tags           fr13
 ...                     api_payload_contract=Admin Order Payload Should Carry KPI Fields
 ...                     canceled_to_delivered_refused=Canceled Order Should Not Become Delivered
 ...                     api_self_role_escalation_refused=Self Promotion To Admin Should Be Refused
+...                     client_total_is_recomputed=Stored Total Should Be The Cart Total
+...                     api_checkout_total_refused=Checkout Should Refuse Invalid Total
 @{ORDER_STATUSES}       pending    confirmed    shipping    delivered    canceled
 
 
@@ -112,6 +114,36 @@ FR13-API-10 Admin Token For Nonexistent User Cannot Read All Orders
     [Tags]    regression    known-bug    needs-jwt-secret
     FR13-API-10
 
+FR13-TC-11 Checkout Stores The Cart Total
+    [Documentation]    Checkout with a client total of 999999999 stores the total of the cart,
+    ...    399000. FR13-TC-11, OQ-06 REQ-15.
+    [Tags]    regression    known-bug
+    FR13-TC-11
+
+FR13-API-14 Checkout Rejects Null Total
+    [Documentation]    Checkout with total_amount null answers 400 or 422 and creates no order.
+    ...    FR13-API-14, OQ-06 REQ-15.
+    [Tags]    regression    known-bug
+    FR13-API-14
+
+FR13-API-15 Checkout Rejects Non Numeric Total
+    [Documentation]    Checkout with total_amount not-a-number answers 400 or 422 and creates
+    ...    no order. FR13-API-15, OQ-06 REQ-15.
+    [Tags]    regression    known-bug
+    FR13-API-15
+
+FR13-API-16 Checkout Rejects Object Total
+    [Documentation]    Checkout with an object as total_amount answers 400 or 422 and creates
+    ...    no order. FR13-API-16, OQ-06 REQ-15.
+    [Tags]    regression    known-bug
+    FR13-API-16
+
+FR13-API-17 Checkout Rejects Numeric String Total
+    [Documentation]    Checkout with total_amount "123456" answers 400 or 422 and creates no
+    ...    order. FR13-API-17, OQ-06 REQ-15.
+    [Tags]    regression    known-bug
+    FR13-API-17
+
 
 *** Keywords ***
 Dashboard Case Should Hold
@@ -199,3 +231,46 @@ Self Promotion To Admin Should Be Refused
     IF    $role == 'admin'
         Fail    ${case}[tc_id] read back: the account granted itself the admin role
     END
+
+Stored Total Should Be The Cart Total
+    [Documentation]    Fills the cart with the case's items, checks out with a different
+    ...    client total and checks the stored total is the cart total.
+    [Arguments]    ${case}
+    ${auth}=    Auth For Actor    ${case}[actor]
+    FOR    ${item}    IN    @{case}[cart_items]
+        Add To Cart As    ${auth}    ${item}
+    END
+    VAR    ${submitted}=    ${case}[seed_orders][0][amount]
+    ${response}=    Check Out As    ${auth}    ${submitted}    ${case}[cart_items]
+    Status Should Be    ${response}    200    ${case}[tc_id] checkout
+    ${orders}=    Get Admin Orders As    ${ADMIN_AUTH}
+    ${order}=    Find Order    ${orders.json()}    ${response.json()}[orderId]
+    IF    $order is None
+        Fail    ${case}[tc_id] read back: order ${response.json()}[orderId] is missing from the admin order list
+    END
+    VAR    ${cart_total}=    ${case}[expect_recomputed_total]
+    IF    $order['total_amount'] != $cart_total
+        Fail    ${case}[tc_id] stored total: expected the cart total ${cart_total}, answered ${order}[total_amount]
+    END
+
+Checkout Should Refuse Invalid Total
+    [Documentation]    Checks out with the case's invalid total. The checkout must be refused
+    ...    and the user's order count must not change.
+    [Arguments]    ${case}
+    ${auth}=    Auth For Actor    ${case}[actor]
+    ${before}=    Order Count Of    ${auth}
+    ${response}=    Check Out As    ${auth}    ${case}[raw_total]
+    Run Keyword And Continue On Failure    Status Should Be Among
+    ...    ${response}    ${case}[expect_http_any_of]    ${case}[tc_id] checkout with an invalid total
+    ${after}=    Order Count Of    ${auth}
+    IF    ${after} != ${before}
+        Fail    ${case}[tc_id] read back: the refused checkout created an order
+    END
+
+Order Count Of
+    [Documentation]    Returns how many orders ``auth`` holds.
+    [Arguments]    ${auth}
+    ${response}=    Get My Orders As    ${auth}
+    Status Should Be    ${response}    200    read back my orders
+    ${count}=    Get Length    ${response.json()}
+    RETURN    ${count}
