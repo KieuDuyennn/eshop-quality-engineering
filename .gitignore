@@ -35,3 +35,6 @@ performance/reports/
 # Python virtual environment and bytecode for api-robot
 .venv/
 __pycache__/
+
+# Robot Framework output, including the backend log the suite writes
+api-robot/results/
