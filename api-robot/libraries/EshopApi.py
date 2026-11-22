@@ -8,6 +8,7 @@ import socket
 import time
 from collections.abc import Mapping
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -16,6 +17,40 @@ from robot.api.deco import keyword, library
 from robot.libraries.BuiltIn import BuiltIn
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "e2e" / "automation" / "data"
+STATUS_STEPS = MappingProxyType(
+    {
+        "pending": (),
+        "confirmed": ("confirmed",),
+        "shipping": ("confirmed", "shipping"),
+        "delivered": ("confirmed", "shipping", "delivered"),
+        "canceled": ("canceled",),
+    }
+)
+
+ORDER_HISTORY_REQUIRED = MappingProxyType(
+    {
+        "order_detail": ("acting_as", "detail_owned_by", "expect_http_any_of"),
+        "admin_orders_list": ("acting_as", "expect_http_any_of"),
+        "admin_set_status": (
+            "acting_as",
+            "seed_owner_orders",
+            "set_status",
+            "expect_http_any_of",
+        ),
+        "order_cancel": ("acting_as", "cancel_owned_by", "expect_http_any_of"),
+        "order_cancel_race": (
+            "acting_as",
+            "seed_owner_orders",
+            "expect_final_status",
+            "expect_http_multiset",
+        ),
+        "checkout": ("acting_as", "checkout_total_amount", "expect_http_any_of"),
+        "my_orders": ("acting_as", "expect_http_any_of"),
+    }
+)
+REFUSAL_READ_BACK = MappingProxyType(
+    {"admin_set_status": "transition_from", "order_cancel": "cancel_target_status"}
+)
 
 
 class RedactedDict(dict):
@@ -43,6 +78,24 @@ def _redact(value: object) -> object:
     if isinstance(value, list):
         return [_redact(item) for item in value]
     return value
+
+
+def _bearer(token: str) -> RedactedDict:
+    return RedactedDict(Authorization=f"Bearer {token}")
+
+
+def _load_json_cases(file_name: str) -> list[dict[str, Any]]:
+    with (DATA_DIR / file_name).open(encoding="utf-8") as handle:
+        return json.load(handle)["cases"]
+
+
+def _find_case(cases: list[dict[str, Any]], tc_id: str, file_name: str) -> dict[str, Any]:
+    matches = [case for case in cases if case.get("tc_id") == tc_id]
+    if len(matches) != 1:
+        raise AssertionError(
+            f"{file_name}: expected exactly one case {tc_id}, found {len(matches)}"
+        )
+    return matches[0]
 
 
 @library(scope="GLOBAL", auto_keywords=False)
@@ -121,9 +174,25 @@ class EshopApi:
         return self.credentials(email, self._variable("${NEW_USER_PASSWORD}"), name=name)
 
     @keyword
+    def admin_credentials(self) -> RedactedDict:
+        """Returns the login body of the seeded admin from ``variables.resource``."""
+        return self.credentials(
+            self._variable("${ADMIN_EMAIL}"), self._variable("${ADMIN_PASSWORD}")
+        )
+
+    @keyword
     def credentials_with_wrong_password(self, credentials: Mapping[str, Any]) -> RedactedDict:
         """Returns a copy of ``credentials`` whose password is not the registered one."""
         return RedactedDict(credentials, password=f"{credentials['password']}-wrong")
+
+    @keyword
+    def auth_header_from_login(self, response: Response) -> RedactedDict:
+        """Returns the auth header for the token in a ``POST /api/login`` response.
+
+        The token is read here and not in Robot, so it is never a keyword argument
+        that a TRACE log level would print.
+        """
+        return _bearer(response.json()["token"])
 
     @keyword
     def load_registration_case(self, tc_id: str) -> dict[str, Any]:
@@ -170,6 +239,49 @@ class EshopApi:
             "login_probe": existing_account is None
             and row["omit_field"] not in ("email", "password"),
         }
+
+    @keyword
+    def load_order_history_case(self, tc_id: str) -> dict[str, Any]:
+        """Reads one ``channel=api`` case of ``fr11_order_history.json``.
+
+        Fails naming the field when a case lacks one its ``api_call`` needs, so a
+        broken data file is reported as such and not as a SUT finding.
+        """
+        file_name = "fr11_order_history.json"
+        case = _find_case(_load_json_cases(file_name), tc_id, file_name)
+        required = ORDER_HISTORY_REQUIRED.get(case.get("api_call", ""))
+        if case.get("channel") != "api" or required is None:
+            raise AssertionError(f"{file_name}: {tc_id} is not an api case with a known api_call")
+        missing = [field for field in required if field not in case]
+        read_back = REFUSAL_READ_BACK.get(case["api_call"])
+        refusal = 200 not in case.get("expect_http_any_of", [200])
+        if refusal and read_back and read_back not in case:
+            missing.append(read_back)
+        if missing:
+            raise AssertionError(f"{file_name}: {tc_id} lacks {', '.join(missing)}")
+        if "seed_owner_orders" in case and not case["seed_owner_orders"]:
+            raise AssertionError(f"{file_name}: {tc_id} has an empty seed_owner_orders")
+        return case
+
+    @keyword
+    def status_steps_to(self, status: str) -> list[str]:
+        """Returns the admin status updates that take a pending order to ``status``.
+
+        The server moves an order forward through pending, confirmed, shipping and
+        delivered one step at a time, and cancels it from pending or confirmed.
+        Seeding reaches canceled through the admin endpoint, so it never depends on
+        the customer cancel guard that FR-11 tests.
+        """
+        if status not in STATUS_STEPS:
+            raise AssertionError(f"'{status}' is not an order status the server knows")
+        return list(STATUS_STEPS[status])
+
+    @keyword
+    def find_order(
+        self, orders: list[dict[str, Any]], order_id: int | str
+    ) -> dict[str, Any] | None:
+        """Returns the order with ``order_id`` from an orders payload, or ``None``."""
+        return next((order for order in orders if str(order["id"]) == str(order_id)), None)
 
     @keyword
     def describe_response(self, response: Response) -> str:
