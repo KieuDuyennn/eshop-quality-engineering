@@ -183,6 +183,12 @@ Get Order Detail As
     ${response}=    Send Request    GET    /api/orders/${order_id}    ${auth}
     RETURN    ${response}
 
+Cancel Order As
+    [Documentation]    Sends ``PUT /api/orders/<id>/cancel`` and returns the response.
+    [Arguments]    ${auth}    ${order_id}
+    ${response}=    Send Request    PUT    /api/orders/${order_id}/cancel    ${auth}
+    RETURN    ${response}
+
 Get Admin Orders As
     [Documentation]    Requests ``GET /api/admin/orders`` and returns the response.
     [Arguments]    ${auth}
