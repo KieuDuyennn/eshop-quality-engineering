@@ -98,6 +98,18 @@ Log In As Admin
     ${auth}=    Log In As    ${admin}
     VAR    ${ADMIN_AUTH}=    ${auth}    scope=SUITE
 
+Auth For Actor
+    [Documentation]    Returns the auth header for ``actor``: ``owner`` and ``other`` are the
+    ...    headers passed in, ``admin`` is ``\${ADMIN_AUTH}``, ``none`` sends no token, and
+    ...    token kinds that login cannot produce come from `Crafted Auth Header`.
+    [Arguments]    ${actor}    ${owner_auth}=${None}    ${other_auth}=${None}
+    IF    $actor == 'owner'    RETURN    ${owner_auth}
+    IF    $actor == 'other'    RETURN    ${other_auth}
+    IF    $actor == 'admin'    RETURN    ${ADMIN_AUTH}
+    IF    $actor == 'none'    RETURN    ${NO_AUTH}
+    ${auth}=    Crafted Auth Header    ${actor}
+    RETURN    ${auth}
+
 Check Out As
     [Documentation]    Sends ``POST /api/checkout`` with ``total_amount`` exactly as given and
     ...    returns the response.
@@ -164,3 +176,15 @@ Order Should Hold Status
     IF    $status != $expected_status
         Fail    ${label}: order ${order_id} holds ${status}, expected ${expected_status}
     END
+
+Get Order Detail As
+    [Documentation]    Requests ``GET /api/orders/<id>`` and returns the response.
+    [Arguments]    ${auth}    ${order_id}
+    ${response}=    Send Request    GET    /api/orders/${order_id}    ${auth}
+    RETURN    ${response}
+
+Get Admin Orders As
+    [Documentation]    Requests ``GET /api/admin/orders`` and returns the response.
+    [Arguments]    ${auth}
+    ${response}=    Send Request    GET    /api/admin/orders    ${auth}
+    RETURN    ${response}
