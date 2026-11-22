@@ -39,6 +39,11 @@
     "FR13-TC-13": {"bug": "BUG-FR13-02", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/38", "expect_error": ["canceled to delivered: expected one of [400, 409, 422], answered 200"]},
     "FR13-TC-19": {"bug": "BUG-FR13-06", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/37", "expect_error": ["self-promotion to admin: expected one of [400, 401, 403], answered 200"]},
     "FR13-API-09": {"bug": "BUG-FR13-04", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/14", "expect_error": ["admin orders as signed_missing_role: expected one of [401, 403], answered 200"]},
-    "FR13-API-10": {"bug": "BUG-FR13-05", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/36", "expect_error": ["admin orders as signed_nonexistent_admin: expected one of [401, 403], answered 200"]}
+    "FR13-API-10": {"bug": "BUG-FR13-05", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/36", "expect_error": ["admin orders as signed_nonexistent_admin: expected one of [401, 403], answered 200"]},
+    "FR13-TC-11": {"bug": "BUG-FR13-03", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/34", "expect_error": ["stored total: expected the cart total 399000, answered 999999999"]},
+    "FR13-API-14": {"bug": "BUG-FR13-03", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/34", "expect_error": ["checkout with an invalid total: expected one of [400, 422], answered 200"]},
+    "FR13-API-15": {"bug": "BUG-FR13-03", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/34", "expect_error": ["checkout with an invalid total: expected one of [400, 422], answered 200"]},
+    "FR13-API-16": {"bug": "BUG-FR13-03", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/34", "expect_error": ["checkout with an invalid total: expected one of [400, 422], answered 200"]},
+    "FR13-API-17": {"bug": "BUG-FR13-03", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/34", "expect_error": ["checkout with an invalid total: expected one of [400, 422], answered 200"]}
   }
 }
