@@ -1,27 +1,27 @@
 *** Settings ***
-Documentation       FR-11 order history through the API. The FR11 cases are the channel=api
-...                 cases of e2e/automation/data/fr11_order_history.json, each run through
-...                 the flow its api_call names. The RF-ORD cases cover a plain cancel and
-...                 a cancel by another user.
+Documentation    FR-11 order history through the API. The FR11 cases are the channel=api
+...              cases of e2e/automation/data/fr11_order_history.json, each run through
+...              the flow its api_call names. The RF-ORD cases cover a plain cancel and
+...              a cancel by another user.
 
-Library             Collections
-Resource            ../resources/api.resource
+Library          Collections
+Resource         ../resources/api.resource
 
-Suite Setup         Log In As Admin
-Test Template       Order History Case Should Hold
+Suite Setup      Log In As Admin
+Test Template    Order History Case Should Hold
 
-Test Tags           fr11
+Test Tags        fr11
 
 
 *** Variables ***
 &{API_CALL_FLOWS}
-...                     order_detail=Order Detail Should Be Answered As Designed
-...                     admin_orders_list=Admin Order List Should Be Answered As Designed
-...                     my_orders=My Orders Should Be Answered As Designed
-...                     checkout=Checkout Should Be Answered As Designed
-...                     admin_set_status=Status Change Should Be Answered As Designed
-...                     order_cancel=Cancel Should Be Answered As Designed
-...                     order_cancel_race=Concurrent Cancels Should Be Acknowledged Once
+...                  order_detail=Order Detail Should Be Answered As Designed
+...                  admin_orders_list=Admin Order List Should Be Answered As Designed
+...                  my_orders=My Orders Should Be Answered As Designed
+...                  checkout=Checkout Should Be Answered As Designed
+...                  admin_set_status=Status Change Should Be Answered As Designed
+...                  order_cancel=Cancel Should Be Answered As Designed
+...                  order_cancel_race=Concurrent Cancels Should Be Acknowledged Once
 
 
 *** Test Cases ***

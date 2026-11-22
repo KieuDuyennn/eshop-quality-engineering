@@ -1,18 +1,18 @@
 *** Settings ***
-Documentation       Session, request and assertion keywords for the EShop API.
+Documentation    Session, request and assertion keywords for the EShop API.
 ...
-...                 Every request goes through `Send Request`, which raises the log level
-...                 while RequestsLibrary sends it, so headers and bodies stay out of the
-...                 log. Every status check goes through `Status Should Be Among`, which
-...                 fails with ``<label>: expected <status>, answered <status>``.
+...              Every request goes through `Send Request`, which raises the log level
+...              while RequestsLibrary sends it, so headers and bodies stay out of the
+...              log. Every status check goes through `Status Should Be Among`, which
+...              fails with ``<label>: expected <status>, answered <status>``.
 
-Library             Collections
-Library             RequestsLibrary
-Resource            variables.resource
-Library             ../libraries/EshopApi.py
-...                     api_url=${API_URL}
-...                     admin_email=${ADMIN_EMAIL}
-...                     request_timeout=${REQUEST_TIMEOUT}
+Library          Collections
+Library          RequestsLibrary
+Resource         variables.resource
+Library          ../libraries/EshopApi/
+...                  api_url=${API_URL}
+...                  admin_email=${ADMIN_EMAIL}
+...                  request_timeout=${REQUEST_TIMEOUT}
 
 
 *** Keywords ***

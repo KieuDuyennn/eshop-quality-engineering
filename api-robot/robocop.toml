@@ -4,3 +4,9 @@ ignore = [
     # that, so the tests of a suite share one admin login instead of repeating it.
     "no-suite-variable",
 ]
+
+[format]
+# Windows runners check files out with CRLF, so keep whatever ending a file has.
+line_ending = "auto"
+# Keep a blank line between templated tests, which carry their own documentation and tags.
+configure = ["NormalizeNewLines.separate_templated_tests=True"]
