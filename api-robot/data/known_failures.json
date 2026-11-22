@@ -30,6 +30,7 @@
     "FR11-TC-35": {"bug": "BUG-FR11-13", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/30", "expect_error": ["checkout: expected one of [400, 422], answered 200"]},
     "FR11-TC-19": {"bug": "BUG-FR11-05", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/22", "expect_error": ["set status: expected one of [401, 403], answered 200", "holds confirmed, expected pending"]},
     "FR11-TC-22": {"bug": "BUG-FR11-06", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/23", "expect_error": ["set status: expected 400, answered 200", "holds delivered, expected canceled"]},
-    "FR11-TC-27": {"bug": "BUG-FR11-09", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/26", "expect_error": ["cancel: expected 400, answered 200", "holds canceled, expected shipping"]}
+    "FR11-TC-27": {"bug": "BUG-FR11-09", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/26", "expect_error": ["cancel: expected 400, answered 200", "holds canceled, expected shipping"]},
+    "FR11-TC-45": {"bug": "BUG-FR11-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/eshop-quality-engineering/issues/3", "expect_error": ["races answered differently from [200, 400, 400, 400, 400]", "answered [200, 200"]}
   }
 }

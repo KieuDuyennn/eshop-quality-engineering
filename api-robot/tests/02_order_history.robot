@@ -21,6 +21,7 @@ Test Tags           fr11
 ...                     checkout=Checkout Should Be Answered As Designed
 ...                     admin_set_status=Status Change Should Be Answered As Designed
 ...                     order_cancel=Cancel Should Be Answered As Designed
+...                     order_cancel_race=Concurrent Cancels Should Be Acknowledged Once
 
 
 *** Test Cases ***
@@ -131,6 +132,12 @@ FR11-TC-44 Cancel Without Token Is Refused
     ...    pending. FR11-TC-44.
     [Tags]    regression
     FR11-TC-44
+
+FR11-TC-45 Concurrent Cancels Are Acknowledged Once
+    [Documentation]    Simultaneous cancels of one pending order answer 200 exactly once and
+    ...    400 for the rest, for each of the seeded orders. FR11-TC-45.
+    [Tags]    regression    known-bug
+    FR11-TC-45
 
 RF-ORD-01 Owner Cancels A Pending Order
     [Documentation]    The owner cancels a pending order once: 200, and the order reads back
@@ -308,3 +315,37 @@ Cancel Should Be Answered As Designed
         Order Should Hold Status
         ...    ${order_owner_auth}    ${order_id}    ${case}[cancel_target_status]    ${case}[tc_id] read back
     END
+
+Concurrent Cancels Should Be Acknowledged Once
+    [Documentation]    Races simultaneous cancels against each seeded order. Each race must
+    ...    answer exactly ``expect_http_multiset`` and every order must end in
+    ...    ``expect_final_status``.
+    [Arguments]    ${case}    ${context}
+    ${expected}=    Evaluate    sorted($case['expect_http_multiset'])
+    ${wrong_races}=    Races Not Answered As Expected    ${context}[seeded_ids]    ${context}[auth]    ${expected}
+    IF    $wrong_races
+        ${races}=    Get Length    ${context}[seeded_ids]
+        ${wrong}=    Get Length    ${wrong_races}
+        ${listing}=    Evaluate    "; ".join($wrong_races)
+        Run Keyword And Continue On Failure    Fail
+        ...    ${case}[tc_id]: ${wrong} of ${races} races answered differently from ${expected}: ${listing}
+    END
+    FOR    ${order_id}    IN    @{context}[seeded_ids]
+        Order Should Hold Status
+        ...    ${context}[owner_auth]    ${order_id}    ${case}[expect_final_status]    ${case}[tc_id] final status
+    END
+
+Races Not Answered As Expected
+    [Documentation]    Sends one race of simultaneous cancels per order and returns a line for
+    ...    each race whose sorted statuses differ from ``expected``.
+    [Arguments]    ${order_ids}    ${auth}    ${expected}
+    ${requests_per_race}=    Get Length    ${expected}
+    VAR    @{wrong_races}=    @{EMPTY}
+    FOR    ${order_id}    IN    @{order_ids}
+        ${statuses}=    Cancel Order Concurrently    ${order_id}    ${auth}    ${requests_per_race}
+        ${answered}=    Evaluate    sorted($statuses)
+        IF    $answered != $expected
+            Append To List    ${wrong_races}    order ${order_id} answered ${answered}
+        END
+    END
+    RETURN    ${wrong_races}
