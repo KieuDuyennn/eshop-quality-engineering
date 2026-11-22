@@ -9,7 +9,7 @@ Documentation    Session, request and assertion keywords for the EShop API.
 Library          Collections
 Library          RequestsLibrary
 Resource         variables.resource
-Library          ../libraries/EshopApi.py
+Library          ../libraries/EshopApi/
 ...                  api_url=${API_URL}
 ...                  admin_email=${ADMIN_EMAIL}
 ...                  request_timeout=${REQUEST_TIMEOUT}
