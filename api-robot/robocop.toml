@@ -1,0 +1,6 @@
+[lint]
+ignore = [
+    # ${ADMIN_AUTH} is set once in Suite Setup by Log In As Admin and only read after
+    # that, so the tests of a suite share one admin login instead of repeating it.
+    "no-suite-variable",
+]
