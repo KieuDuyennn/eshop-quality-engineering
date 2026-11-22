@@ -1,4 +1,9 @@
-"""Python keywords for the EShop API suite."""
+"""Python keywords for the EShop API suite.
+
+Reads the test design files the Playwright suite also uses, builds request bodies
+and auth headers that never print a password or a token, and sends the concurrent
+cancel requests that RequestsLibrary cannot send in parallel.
+"""
 
 from __future__ import annotations
 
@@ -6,11 +11,14 @@ import base64
 import csv
 import hashlib
 import hmac
+import http.client
 import json
 import os
 import socket
+import threading
 import time
 from collections.abc import Mapping
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
@@ -124,8 +132,9 @@ class EshopApi:
     whose logged form shows ``***`` instead.
     """
 
-    def __init__(self, api_url: str = "http://localhost:3000") -> None:
+    def __init__(self, api_url: str = "http://localhost:3000", request_timeout: float = 10) -> None:
         self._api_url = api_url.rstrip("/")
+        self._request_timeout = float(request_timeout)
         self._last_stamp = 0
 
     @keyword("API Port Should Be Free")
@@ -329,3 +338,45 @@ class EshopApi:
             body = response.text
         method = response.request.method
         return f"{method} {response.url} answered {response.status_code}: {body[:500]}"
+
+    @keyword
+    def cancel_order_concurrently(
+        self, order_id: int | str, auth: Mapping[str, str], count: int = 10
+    ) -> list[int]:
+        """Sends ``count`` cancel requests for one order at the same moment.
+
+        Each worker opens its connection first and then waits on a barrier, so the
+        requests leave together and reach the server inside the gap between its
+        status check and its update. Returns one status code per request.
+        """
+        count = int(count)
+        target = urlsplit(self._api_url)
+        path = f"/api/orders/{order_id}/cancel"
+        headers = dict(auth)
+        barrier = threading.Barrier(count, timeout=self._request_timeout)
+
+        def cancel_once() -> int:
+            connection = http.client.HTTPConnection(
+                target.hostname, target.port, timeout=self._request_timeout
+            )
+            try:
+                try:
+                    connection.connect()
+                except OSError:
+                    # Release the other workers at once instead of after the timeout.
+                    barrier.abort()
+                    raise
+                barrier.wait()
+                connection.request("PUT", path, headers=headers)
+                return connection.getresponse().status
+            finally:
+                connection.close()
+
+        with ThreadPoolExecutor(max_workers=count) as pool:
+            futures = [pool.submit(cancel_once) for _ in range(count)]
+        errors = [future.exception() for future in futures if future.exception()]
+        connect_errors = [error for error in errors if isinstance(error, OSError)]
+        if errors:
+            cause = (connect_errors or errors)[0]
+            raise AssertionError(f"concurrent cancel of order {order_id} failed: {cause!r}")
+        return [future.result() for future in futures]
