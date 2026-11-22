@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation       FR-01 account registration through the API. The FR01 cases are the
-...                 level=api rows of e2e/automation/data/fr01_registration.csv.
+...                 level=api rows of e2e/automation/data/fr01_registration.csv; the RF-AUTH
+...                 cases log in as a user the test registers itself.
 
 Resource            ../resources/api.resource
 
@@ -95,6 +96,26 @@ FR01-API-12 Duplicate Email Is Rejected
     ...    FR01-API-12, EC-31.
     [Tags]    regression    known-bug
     FR01-API-12
+
+RF-AUTH-01 Newly Registered User Can Log In
+    [Documentation]    A user registered by the test logs in with 200 and gets a token.
+    ...    New check, RF-AUTH-01.
+    [Tags]    smoke
+    [Template]    NONE
+    ${user}=    Register New User
+    ${response}=    Log In    ${user}
+    Status Should Be    ${response}    200    RF-AUTH-01 login
+    Should Be True    $response.json().get('token')    RF-AUTH-01 login: expected a token in the body, answered none
+
+RF-AUTH-02 Wrong Password Is Refused
+    [Documentation]    A wrong password for a user registered by the test answers 401. Seeded
+    ...    accounts are never used here, because two wrong passwords lock them. RF-AUTH-02.
+    [Tags]    regression
+    [Template]    NONE
+    ${user}=    Register New User
+    ${wrong}=    Credentials With Wrong Password    ${user}
+    ${response}=    Log In    ${wrong}
+    Status Should Be    ${response}    401    RF-AUTH-02 login with a wrong password
 
 
 *** Keywords ***

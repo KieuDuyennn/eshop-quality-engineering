@@ -66,3 +66,12 @@ Log In
     [Arguments]    ${credentials}
     ${response}=    Send Request    POST    /api/login    json=${credentials}
     RETURN    ${response}
+
+Register New User
+    [Documentation]    Registers an account with a unique ``rf.<test-id>.<timestamp>`` email
+    ...    and returns its credentials.
+    ${email}=    Unique Email
+    ${user}=    New User Credentials    ${email}    RF User
+    ${response}=    Register Account    ${user}
+    Status Should Be    ${response}    200    setup register ${email}
+    RETURN    ${user}
