@@ -94,6 +94,24 @@ FR13-TC-19 User Cannot Grant Themselves Admin
     [Tags]    regression    known-bug
     FR13-TC-19
 
+FR13-API-07 Expired Token Is Refused By Admin Endpoint
+    [Documentation]    GET /api/admin/orders with a correctly signed but expired token answers
+    ...    401 or 403. FR13-API-07.
+    [Tags]    regression    needs-jwt-secret
+    FR13-API-07
+
+FR13-API-09 Signed Token Without Role Cannot Read All Orders
+    [Documentation]    GET /api/admin/orders with a correctly signed token that has no role
+    ...    answers 401 or 403. FR13-API-09, BUG-08.
+    [Tags]    regression    known-bug    needs-jwt-secret
+    FR13-API-09
+
+FR13-API-10 Admin Token For Nonexistent User Cannot Read All Orders
+    [Documentation]    GET /api/admin/orders with an admin-role token for a user id that does
+    ...    not exist answers 401 or 403. FR13-API-10.
+    [Tags]    regression    known-bug    needs-jwt-secret
+    FR13-API-10
+
 
 *** Keywords ***
 Dashboard Case Should Hold

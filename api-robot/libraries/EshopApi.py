@@ -145,8 +145,14 @@ class EshopApi:
     whose logged form shows ``***`` instead.
     """
 
-    def __init__(self, api_url: str = "http://localhost:3000", request_timeout: float = 10) -> None:
+    def __init__(
+        self,
+        api_url: str = "http://localhost:3000",
+        admin_email: str = "admin@eshop.com",
+        request_timeout: float = 10,
+    ) -> None:
         self._api_url = api_url.rstrip("/")
+        self._admin_email = admin_email
         self._request_timeout = float(request_timeout)
         self._last_stamp = 0
 
@@ -236,14 +242,22 @@ class EshopApi:
     def crafted_auth_header(self, actor: str) -> RedactedDict:
         """Returns the auth header for an ``actor`` that login cannot produce.
 
-        ``malformed_token`` is not a JWT at all. ``ghost`` is a token for a user id
-        that does not exist, signed with the SUT key from the ``SUT_JWT_SECRET``
-        environment variable, the same way the Playwright suite mints it.
+        ``malformed_token`` is not a JWT at all. ``ghost``, ``expired_token``,
+        ``signed_missing_role`` and ``signed_nonexistent_admin`` are signed with the
+        SUT key from the ``SUT_JWT_SECRET`` environment variable, the same way the
+        Playwright suite mints them.
         """
         if actor == "malformed_token":
             return _bearer(MALFORMED_TOKEN)
         claims = {
             "ghost": {"id": NONEXISTENT_USER_ID, "role": "user"},
+            "expired_token": {"id": 1, "role": "admin", "exp": int(time.time()) - 3600},
+            "signed_missing_role": {"id": 1, "email": self._admin_email},
+            "signed_nonexistent_admin": {
+                "id": NONEXISTENT_USER_ID,
+                "email": f"missing.{self._unique_stamp()}@example.com",
+                "role": "admin",
+            },
         }
         if actor not in claims:
             raise AssertionError(f"no crafted token is defined for actor '{actor}'")
