@@ -2,10 +2,26 @@
 
 from __future__ import annotations
 
+import json
 import socket
+from collections.abc import Mapping
 from urllib.parse import urlsplit
 
+from requests import Response
 from robot.api.deco import keyword, library
+
+
+def _is_sensitive(key: object) -> bool:
+    name = str(key).lower()
+    return "password" in name or "token" in name or name == "authorization"
+
+
+def _redact(value: object) -> object:
+    if isinstance(value, Mapping):
+        return {key: "***" if _is_sensitive(key) else _redact(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_redact(item) for item in value]
+    return value
 
 
 @library(scope="GLOBAL", auto_keywords=False)
@@ -33,3 +49,13 @@ class EshopApi:
             f"something already listens on {target.hostname}:{port}; "
             "stop it so this run starts its own backend"
         )
+
+    @keyword
+    def describe_response(self, response: Response) -> str:
+        """Returns ``METHOD URL answered STATUS: BODY`` with passwords and tokens hidden."""
+        try:
+            body = json.dumps(_redact(response.json()), ensure_ascii=False)
+        except ValueError:
+            body = response.text
+        method = response.request.method
+        return f"{method} {response.url} answered {response.status_code}: {body[:500]}"

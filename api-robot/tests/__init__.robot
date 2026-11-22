@@ -7,26 +7,22 @@ Documentation       Starts the EShop backend once for the whole run and stops it
 
 Library             OperatingSystem
 Library             Process
-Library             RequestsLibrary
-Library             ../libraries/EshopApi.py    api_url=${API_URL}
+Resource            ../resources/api.resource
 
 Suite Setup         Start Backend
 Suite Teardown      Terminate All Processes
 
 
 *** Variables ***
-${API_URL}                  http://localhost:3000
-${REQUEST_TIMEOUT}          ${10}
-${BACKEND_START_TIMEOUT}    30 s
-${BACKEND_POLL_INTERVAL}    1 s
-${BACKEND_DIR}              ${CURDIR}${/}..${/}..${/}sut${/}backend
-${RESULTS_DIR}              ${CURDIR}${/}..${/}results
-${BACKEND_LOG}              ${RESULTS_DIR}${/}backend.log
+${BACKEND_DIR}      ${CURDIR}${/}..${/}..${/}sut${/}backend
+${RESULTS_DIR}      ${CURDIR}${/}..${/}results
+${BACKEND_LOG}      ${RESULTS_DIR}${/}backend.log
 
 
 *** Keywords ***
 Start Backend
-    [Documentation]    Starts ``node server.js`` with LOADTEST=1 and waits until it answers.
+    [Documentation]    Starts ``node server.js`` with LOADTEST=1, waits until it answers and
+    ...    opens the API session.
     API Port Should Be Free
     Create Directory    ${RESULTS_DIR}
     Start Process
@@ -47,6 +43,7 @@ Start Backend
         ${last_lines}=    Evaluate    "\\n".join($log.splitlines()[-20:])
         Fail    backend did not answer within ${BACKEND_START_TIMEOUT}, last lines of backend.log:\n${last_lines}
     END
+    Open API Session
 
 Backend Should Answer
     [Documentation]    Passes when ``GET /api/products`` answers 200.
