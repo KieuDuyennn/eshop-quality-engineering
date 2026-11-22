@@ -6,6 +6,7 @@ Documentation       Session, request and assertion keywords for the EShop API.
 ...                 log. Every status check goes through `Status Should Be Among`, which
 ...                 fails with ``<label>: expected <status>, answered <status>``.
 
+Library             Collections
 Library             RequestsLibrary
 Resource            variables.resource
 Library             ../libraries/EshopApi.py
@@ -120,9 +121,10 @@ Auth For Actor
 
 Check Out As
     [Documentation]    Sends ``POST /api/checkout`` with ``total_amount`` exactly as given and
-    ...    returns the response.
-    [Arguments]    ${auth}    ${total_amount}
+    ...    returns the response. ``items`` is sent only when given; the server ignores it.
+    [Arguments]    ${auth}    ${total_amount}    ${items}=${None}
     VAR    &{body}=    total_amount=${total_amount}    shipping_address=${SHIPPING_ADDRESS}
+    IF    $items is not None    Set To Dictionary    ${body}    items=${items}
     ${response}=    Send Request    POST    /api/checkout    ${auth}    json=${body}
     RETURN    ${response}
 
@@ -220,3 +222,10 @@ Get Profile As
     [Arguments]    ${auth}
     ${response}=    Send Request    GET    /api/users/me    ${auth}
     RETURN    ${response}
+
+Add To Cart As
+    [Documentation]    Sends one cart ``item`` to ``POST /api/cart`` and fails unless it is
+    ...    accepted.
+    [Arguments]    ${auth}    ${item}
+    ${response}=    Send Request    POST    /api/cart    ${auth}    json=${item}
+    Status Should Be    ${response}    200    setup add to cart
