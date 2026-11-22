@@ -8,9 +8,3 @@ select = ["E", "W", "F", "I", "B", "UP", "N", "SIM", "RUF", "ANN"]
 [tool.ruff.lint.per-file-ignores]
 # Robot imports the library by its file name, so the module keeps the class name.
 "libraries/EshopApi.py" = ["N999"]
-
-[tool.robotidy]
-# Windows runners check files out with CRLF, so keep whatever ending a file has.
-lineseparator = "auto"
-# Keep a blank line between templated tests, which carry their own documentation and tags.
-configure = ["NormalizeNewLines:separate_templated_tests=True"]

@@ -1,13 +1,13 @@
 *** Settings ***
-Documentation       FR-01 account registration through the API. The FR01 cases are the
-...                 level=api rows of e2e/automation/data/fr01_registration.csv; the RF-AUTH
-...                 cases log in as a user the test registers itself.
+Documentation    FR-01 account registration through the API. The FR01 cases are the
+...              level=api rows of e2e/automation/data/fr01_registration.csv; the RF-AUTH
+...              cases log in as a user the test registers itself.
 
-Resource            ../resources/api.resource
+Resource         ../resources/api.resource
 
-Test Template       Register Request Should Get The Designed Answer
+Test Template    Register Request Should Get The Designed Answer
 
-Test Tags           fr01
+Test Tags        fr01
 
 
 *** Test Cases ***

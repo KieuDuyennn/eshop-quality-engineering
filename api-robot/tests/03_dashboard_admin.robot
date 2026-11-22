@@ -1,27 +1,27 @@
 *** Settings ***
-Documentation       FR-13 admin dashboard data through the API. The cases are the layer=api
-...                 cases of e2e/automation/data/fr13_dashboard.json, each run through the
-...                 flow its check names.
+Documentation    FR-13 admin dashboard data through the API. The cases are the layer=api
+...              cases of e2e/automation/data/fr13_dashboard.json, each run through the
+...              flow its check names.
 
-Resource            ../resources/api.resource
+Resource         ../resources/api.resource
 
-Suite Setup         Log In As Admin
-Test Template       Dashboard Case Should Hold
+Suite Setup      Log In As Admin
+Test Template    Dashboard Case Should Hold
 
-Test Tags           fr13
+Test Tags        fr13
 
 
 *** Variables ***
 &{CHECK_FLOWS}
-...                     api_admin_orders_status=Admin List Should Answer Actor As Designed
-...                     api_admin_users_status=Admin List Should Answer Actor As Designed
-...                     api_status_write_refused=Status Write Should Be Refused
-...                     api_payload_contract=Admin Order Payload Should Carry KPI Fields
-...                     canceled_to_delivered_refused=Canceled Order Should Not Become Delivered
-...                     api_self_role_escalation_refused=Self Promotion To Admin Should Be Refused
-...                     client_total_is_recomputed=Stored Total Should Be The Cart Total
-...                     api_checkout_total_refused=Checkout Should Refuse Invalid Total
-@{ORDER_STATUSES}       pending    confirmed    shipping    delivered    canceled
+...                  api_admin_orders_status=Admin List Should Answer Actor As Designed
+...                  api_admin_users_status=Admin List Should Answer Actor As Designed
+...                  api_status_write_refused=Status Write Should Be Refused
+...                  api_payload_contract=Admin Order Payload Should Carry KPI Fields
+...                  canceled_to_delivered_refused=Canceled Order Should Not Become Delivered
+...                  api_self_role_escalation_refused=Self Promotion To Admin Should Be Refused
+...                  client_total_is_recomputed=Stored Total Should Be The Cart Total
+...                  api_checkout_total_refused=Checkout Should Refuse Invalid Total
+@{ORDER_STATUSES}    pending    confirmed    shipping    delivered    canceled
 
 
 *** Test Cases ***
