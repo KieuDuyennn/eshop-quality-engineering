@@ -31,6 +31,12 @@
     "FR11-TC-19": {"bug": "BUG-FR11-05", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/22", "expect_error": ["set status: expected one of [401, 403], answered 200", "holds confirmed, expected pending"]},
     "FR11-TC-22": {"bug": "BUG-FR11-06", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/23", "expect_error": ["set status: expected 400, answered 200", "holds delivered, expected canceled"]},
     "FR11-TC-27": {"bug": "BUG-FR11-09", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/26", "expect_error": ["cancel: expected 400, answered 200", "holds canceled, expected shipping"]},
-    "FR11-TC-45": {"bug": "BUG-FR11-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/eshop-quality-engineering/issues/3", "expect_error": ["races answered differently from [200, 400, 400, 400, 400]", "answered [200, 200"]}
+    "FR11-TC-45": {"bug": "BUG-FR11-17", "kind": "bug", "issue": "https://github.com/KieuDuyennn/eshop-quality-engineering/issues/3", "expect_error": ["races answered differently from [200, 400, 400, 400, 400]", "answered [200, 200"]},
+
+    "FR13-API-03": {"bug": "BUG-FR13-04", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/14", "expect_error": ["admin orders as non_admin: expected one of [401, 403], answered 200"]},
+    "FR13-API-04": {"bug": "BUG-FR13-04", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/14", "expect_error": ["admin users as non_admin: expected one of [401, 403], answered 200"]},
+    "FR13-API-06": {"bug": "BUG-FR13-04", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/14", "expect_error": ["status write as non_admin: expected one of [401, 403], answered 200"]},
+    "FR13-TC-13": {"bug": "BUG-FR13-02", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/38", "expect_error": ["canceled to delivered: expected one of [400, 409, 422], answered 200"]},
+    "FR13-TC-19": {"bug": "BUG-FR13-06", "kind": "bug", "issue": "https://github.com/KieuDuyennn/software__testing/issues/37", "expect_error": ["self-promotion to admin: expected one of [400, 401, 403], answered 200"]}
   }
 }
