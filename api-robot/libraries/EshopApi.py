@@ -115,14 +115,18 @@ class EshopApi:
     def load_registration_case(self, tc_id: str) -> dict[str, Any]:
         """Reads one ``level=api`` row of ``fr01_registration.csv``.
 
-        Fills ``{{UNIQUE}}`` and ``{{RUN}}``, drops the key named in ``omit_field``
-        and returns a dictionary with:
+        Fills ``{{UNIQUE}}``, ``{{EXISTING}}`` and ``{{RUN}}``, drops the key named
+        in ``omit_field`` and returns a dictionary with:
 
         - ``body``: the register request body
         - ``expected_status``: ``expect_signal`` as an integer
         - ``expect_success``: ``True`` when ``expect_outcome`` is ``success``
+        - ``existing_account``: the register body to send first, or ``None``.
+          ``{{EXISTING}}`` names an address that already has an account, so the
+          test creates that account itself
         - ``login_probe``: whether logging in afterwards can tell if an account
-          was written. It cannot when the email or password key was left out
+          was written. It cannot when the email or password key was left out, or
+          when the address already had an account
         """
         with (DATA_DIR / "fr01_registration.csv").open(encoding="utf-8", newline="") as handle:
             rows = [row for row in csv.DictReader(handle) if row["tc_id"] == tc_id]
@@ -130,9 +134,13 @@ class EshopApi:
             raise AssertionError(f"fr01_registration.csv: expected one api row {tc_id}")
         row = rows[0]
         run = str(self._unique_stamp())
+        existing_account = None
         email = row["email"].replace("{{RUN}}", run)
         if email == "{{UNIQUE}}":
             email = self.unique_email(tc_id)
+        elif email == "{{EXISTING}}":
+            email = self.unique_email(tc_id)
+            existing_account = self.credentials(email, "Existing123!", name="RF Existing User")
         if "{{" in email:
             raise AssertionError(f"fr01_registration.csv: {tc_id} has an unknown placeholder")
         if row["omit_field"] not in ("", "name", "email", "password"):
@@ -144,7 +152,9 @@ class EshopApi:
             "body": body,
             "expected_status": int(row["expect_signal"]),
             "expect_success": row["expect_outcome"] == "success",
-            "login_probe": row["omit_field"] not in ("email", "password"),
+            "existing_account": existing_account,
+            "login_probe": existing_account is None
+            and row["omit_field"] not in ("email", "password"),
         }
 
     @keyword
