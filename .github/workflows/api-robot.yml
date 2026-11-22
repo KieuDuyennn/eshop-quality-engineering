@@ -1,0 +1,99 @@
+name: api-robot
+
+# Robot Framework API suite on Ubuntu and Windows. The suite starts the backend
+# itself (api-robot/tests/__init__.robot). Tests that expose open SUT defects are
+# tagged known-bug and run with --skiponfailure known-bug, so they show as skipped.
+# The check step fails the job when one of them passed, failed for a reason other
+# than the one in api-robot/data/known_failures.json, or when any other test failed.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api-robot/**"
+      - "e2e/automation/data/**"
+      - "sut/backend/**"
+      - ".github/scripts/check-robot-known-failures.py"
+      - ".github/workflows/api-robot.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "api-robot/**"
+      - "e2e/automation/data/**"
+      - "sut/backend/**"
+      - ".github/scripts/check-robot-known-failures.py"
+      - ".github/workflows/api-robot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-robot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-robot:
+    name: api-robot (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    # Git Bash on Windows, so every run step uses the same commands on both runners.
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sut/backend/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci --prefix sut/backend
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: api-robot/requirements.txt
+
+      - name: Install Robot Framework and linters
+        run: python -m pip install -r api-robot/requirements.txt
+
+      - name: Lint Python and Robot files
+        run: |
+          ruff check --config api-robot/pyproject.toml api-robot .github/scripts/check-robot-known-failures.py
+          ruff format --check --config api-robot/pyproject.toml api-robot .github/scripts/check-robot-known-failures.py
+          robotidy --check api-robot
+          robocop check api-robot
+
+      - name: Dry run
+        run: robot --dryrun --output NONE --report NONE --log NONE api-robot/tests
+
+      - name: Run Robot suite
+        env:
+          SUT_JWT_SECRET: ${{ secrets.SUT_JWT_SECRET }}
+        run: robot --skiponfailure known-bug --outputdir api-robot/results api-robot/tests
+
+      - name: Check known defects failed for the recorded reason
+        if: always() && hashFiles('api-robot/results/output.xml') != ''
+        run: >
+          python .github/scripts/check-robot-known-failures.py
+          api-robot/results/output.xml
+          api-robot/data/known_failures.json
+
+      - name: Upload Robot results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-results-${{ matrix.os }}
+          path: api-robot/results/
+          retention-days: 14
