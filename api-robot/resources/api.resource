@@ -102,14 +102,19 @@ Log In As Admin
 
 Auth For Actor
     [Documentation]    Returns the auth header for ``actor``: ``owner`` and ``other`` are the
-    ...    headers passed in, ``admin`` is ``\${ADMIN_AUTH}``, ``none`` sends no token, and
-    ...    token kinds that login cannot produce come from `Crafted Auth Header`.
+    ...    headers passed in, ``admin`` is ``\${ADMIN_AUTH}``, ``none`` and ``anonymous``
+    ...    send no token, ``non_admin`` and ``throwaway_user`` are users registered here,
+    ...    and token kinds that login cannot produce come from `Crafted Auth Header`.
     [Arguments]    ${actor}    ${owner_auth}=${None}    ${other_auth}=${None}
     IF    $actor == 'owner'    RETURN    ${owner_auth}
     IF    $actor == 'other'    RETURN    ${other_auth}
     IF    $actor == 'admin'    RETURN    ${ADMIN_AUTH}
-    IF    $actor == 'none'    RETURN    ${NO_AUTH}
-    ${auth}=    Crafted Auth Header    ${actor}
+    IF    $actor in ('none', 'anonymous')    RETURN    ${NO_AUTH}
+    IF    $actor in ('non_admin', 'throwaway_user')
+        ${auth}=    Register And Log In New User
+    ELSE
+        ${auth}=    Crafted Auth Header    ${actor}
+    END
     RETURN    ${auth}
 
 Check Out As
@@ -195,4 +200,22 @@ Get Admin Orders As
     [Documentation]    Requests ``GET /api/admin/orders`` and returns the response.
     [Arguments]    ${auth}
     ${response}=    Send Request    GET    /api/admin/orders    ${auth}
+    RETURN    ${response}
+
+Get Admin Users As
+    [Documentation]    Requests ``GET /api/admin/users`` and returns the response.
+    [Arguments]    ${auth}
+    ${response}=    Send Request    GET    /api/admin/users    ${auth}
+    RETURN    ${response}
+
+Update Profile As
+    [Documentation]    Sends ``body`` to ``PUT /api/users/me`` and returns the response.
+    [Arguments]    ${auth}    ${body}
+    ${response}=    Send Request    PUT    /api/users/me    ${auth}    json=${body}
+    RETURN    ${response}
+
+Get Profile As
+    [Documentation]    Requests ``GET /api/users/me`` and returns the response.
+    [Arguments]    ${auth}
+    ${response}=    Send Request    GET    /api/users/me    ${auth}
     RETURN    ${response}
